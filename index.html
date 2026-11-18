@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carteirinha Pet</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--lime:#afd953;--green:#005e3a;--brown:#4c371a;--brown2:#674e2f;--cream:#ffe9de;--card:#fff8f3;--line:#ecd3c3}
+*{box-sizing:border-box}
+body{margin:0;font-family:Nunito,sans-serif;background:var(--cream);color:var(--brown);min-height:100vh}
+h1,h2,h3,.brand{font-family:Fredoka,sans-serif;font-weight:500;margin:0}
+button{font-family:inherit;cursor:pointer}
+.hidden{display:none!important}
+.btn{background:var(--green);color:#fff;border:0;border-radius:999px;padding:11px 22px;font-weight:700;font-size:15px;transition:.15s}
+.btn:hover{background:#007a4b;transform:translateY(-1px)}
+.btn.soft{background:var(--lime);color:var(--green)}
+.btn.soft:hover{background:#c0e76a}
+.btn.ghost{background:transparent;color:var(--brown2);border:2px solid var(--line)}
+.btn.ghost:hover{background:#fff;color:var(--brown)}
+input,select,textarea{width:100%;font-family:inherit;font-size:15px;color:var(--brown);background:#fff;border:2px solid var(--line);border-radius:14px;padding:10px 14px;outline:0}
+input:focus,select:focus,textarea:focus{border-color:var(--lime)}
+label{display:block;font-size:13px;font-weight:700;color:var(--brown2);margin:0 0 5px 4px}
+.field{margin-bottom:14px}
+.paw{width:1em;height:1em;fill:currentColor}
+
+/* login */
+#auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+background:radial-gradient(circle at 15% 20%,rgba(175,217,83,.35) 0 90px,transparent 91px),radial-gradient(circle at 88% 85%,rgba(175,217,83,.3) 0 130px,transparent 131px),var(--cream)}
+.auth-card{background:var(--card);border-radius:32px;padding:34px 30px;width:100%;max-width:400px;box-shadow:0 10px 0 var(--lime),0 18px 40px rgba(76,55,26,.12);text-align:center}
+.logo{width:68px;height:68px;border-radius:50%;background:var(--green);color:var(--lime);display:grid;place-items:center;font-size:36px;margin:0 auto 12px}
+.auth-card h1{font-size:30px;color:var(--green)}
+.auth-card p{color:var(--brown2);margin:6px 0 20px}
+.seg{display:flex;background:var(--cream);border-radius:999px;padding:4px;margin-bottom:18px}
+.seg button{flex:1;border:0;background:transparent;border-radius:999px;padding:9px;font-weight:700;color:var(--brown2)}
+.seg button.on{background:var(--green);color:#fff}
+.auth-card form{text-align:left}
+.or{display:flex;align-items:center;gap:10px;color:var(--brown2);font-size:13px;margin:16px 0}
+.or:before,.or:after{content:"";flex:1;height:2px;background:var(--line)}
+.gbtn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;border:2px solid var(--line);border-radius:999px;padding:10px;font-weight:700;color:var(--brown)}
+.gbtn:hover{border-color:var(--lime)}
+.err{color:#9a3412;background:#ffe4d6;border-radius:12px;padding:8px 12px;font-size:13px;margin-bottom:12px;text-align:left}
+
+/* app */
+header{background:var(--green);color:#fff;padding:14px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-radius:0 0 28px 28px}
+.brand{font-size:22px;display:flex;align-items:center;gap:8px;margin-right:auto}
+.brand .paw{color:var(--lime);font-size:26px}
+header .btn.ghost{color:#fff;border-color:rgba(255,255,255,.35);padding:8px 16px;font-size:14px}
+header .btn.ghost:hover{background:rgba(255,255,255,.12);color:#fff}
+main{max-width:860px;margin:0 auto;padding:22px 16px 60px}
+.petbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:18px}
+.pets{display:flex;gap:8px;flex-wrap:wrap;flex:1}
+.pet{background:var(--card);border:2px solid var(--line);color:var(--brown);border-radius:999px;padding:8px 18px;font-weight:700;display:flex;align-items:center;gap:8px}
+.pet.on{background:var(--lime);border-color:var(--lime);color:var(--green)}
+.pet small{font-weight:600;color:var(--brown2)}
+.empty{text-align:center;background:var(--card);border-radius:28px;padding:44px 20px;color:var(--brown2)}
+.empty .logo{background:var(--lime);color:var(--green)}
+.hero{background:var(--card);border-radius:28px;padding:18px 22px;display:flex;align-items:center;gap:16px;margin-bottom:18px;box-shadow:0 5px 0 var(--line)}
+.hero .logo{margin:0;width:56px;height:56px;font-size:28px;flex:none}
+.hero h2{font-size:26px;color:var(--green)}
+.hero p{margin:2px 0 0;color:var(--brown2);font-size:14px}
+.hero .del{margin-left:auto;background:none;border:0;color:var(--brown2);text-decoration:underline;font-size:13px}
+nav.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;position:sticky;top:0;z-index:5;padding:8px 0;background:var(--cream);margin-bottom:10px}
+nav.tabs button{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:12px 8px;color:var(--brown);font-family:Fredoka,sans-serif;font-size:16px;line-height:1.2}
+nav.tabs button span{display:block;font-family:Nunito;font-size:12px;color:var(--brown2);font-weight:700;margin-top:2px}
+nav.tabs button.on{background:var(--green);border-color:var(--green);color:#fff}
+nav.tabs button.on span{color:var(--lime)}
+.panel{background:var(--card);border-radius:28px;padding:22px;box-shadow:0 5px 0 var(--line)}
+.panel>h3{font-size:22px;color:var(--green);margin-bottom:4px}
+.panel>.sub{color:var(--brown2);font-size:14px;margin:0 0 18px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.full{grid-column:1/-1}
+.hint{font-size:12px;color:var(--brown2);margin:4px 0 0 4px}
+.list{margin-top:26px;display:grid;gap:12px}
+.list h4{font-family:Fredoka;font-weight:500;font-size:17px;margin:0;color:var(--brown2)}
+.item{background:#fff;border:2px solid var(--line);border-left:8px solid var(--lime);border-radius:20px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start}
+.item.late{border-left-color:var(--brown2)}
+.item .info{flex:1;min-width:0}
+.item b{font-family:Fredoka;font-weight:500;font-size:18px;color:var(--green)}
+.item .brandtag{color:var(--brown2);font-size:14px;font-weight:600}
+.dates{display:flex;gap:6px 18px;flex-wrap:wrap;font-size:14px;margin-top:6px}
+.dates span em{font-style:normal;color:var(--brown2);font-weight:600}
+.note{font-size:13px;color:var(--brown2);margin-top:6px}
+.badge{display:inline-block;border-radius:999px;padding:3px 11px;font-size:12px;font-weight:700;margin-top:8px}
+.b-ok{background:#e4f3bd;color:var(--green)}
+.b-soon{background:var(--lime);color:var(--green)}
+.b-late{background:var(--brown2);color:#fff}
+.x{background:none;border:0;color:var(--brown2);font-size:22px;line-height:1;padding:2px 6px;border-radius:8px}
+.x:hover{background:var(--cream)}
+.none{color:var(--brown2);text-align:center;padding:14px;font-size:14px}
+dialog{border:0;border-radius:28px;background:var(--card);color:var(--brown);padding:26px;width:min(400px,92vw);box-shadow:0 20px 60px rgba(76,55,26,.3)}
+dialog::backdrop{background:rgba(76,55,26,.45)}
+dialog h3{color:var(--green);font-size:22px;margin-bottom:16px}
+.row{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
+@media(max-width:560px){.grid{grid-template-columns:1fr}nav.tabs button{font-size:14px;padding:10px 4px}.hero .del{display:none}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute"><symbol id="paw" viewBox="0 0 24 24"><ellipse cx="5.2" cy="10" rx="2.2" ry="2.9"/><ellipse cx="9.4" cy="5.6" rx="2.2" ry="2.9"/><ellipse cx="14.6" cy="5.6" rx="2.2" ry="2.9"/><ellipse cx="18.8" cy="10" rx="2.2" ry="2.9"/><path d="M12 11c-3.3 0-6 2.7-6 5.6 0 2 1.6 3 3.2 3 1 0 1.8-.4 2.8-.4s1.8.4 2.8.4c1.6 0 3.2-1 3.2-3 0-2.9-2.7-5.6-6-5.6z"/></symbol></svg>
+
+<!-- LOGIN -->
+<section id="auth">
+  <div class="auth-card">
+    <div class="logo"><svg class="paw"><use href="#paw"/></svg></div>
+    <h1>Carteirinha Pet</h1>
+    <p>A saúde do seu bichinho, sempre em dia.</p>
+    <div class="seg">
+      <button id="tIn" class="on" type="button">Entrar</button>
+      <button id="tUp" type="button">Criar conta</button>
+    </div>
+    <div id="authErr" class="err hidden"></div>
+    <form id="authForm">
+      <div class="field"><label>E-mail</label><input id="em" type="email" required autocomplete="email"></div>
+      <div class="field"><label>Senha</label><input id="pw" type="password" minlength="6" required autocomplete="current-password"></div>
+      <button class="btn" style="width:100%" id="authBtn">Entrar</button>
+    </form>
+    <div class="or">ou</div>
+    <button class="gbtn" id="gBtn" type="button">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.9-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.6 10.8l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.9 6.1C6.5 42.6 14.6 48 24 48z"/></svg>
+      Continuar com Google
+    </button>
+  </div>
+</section>
+
+<!-- APP -->
+<section id="app" class="hidden">
+  <header>
+    <div class="brand"><svg class="paw"><use href="#paw"/></svg>Carteirinha Pet</div>
+    <span id="who" style="font-size:14px;opacity:.85"></span>
+    <button class="btn ghost" id="out">Sair</button>
+  </header>
+  <main>
+    <div class="petbar">
+      <div class="pets" id="pets"></div>
+      <button class="btn soft" id="addPet">Novo pet</button>
+    </div>
+    <div id="empty" class="empty hidden">
+      <div class="logo"><svg class="paw"><use href="#paw"/></svg></div>
+      <h2 style="color:var(--green)">Vamos começar?</h2>
+      <p>Cadastre seu primeiro pet para montar a carteirinha dele.</p>
+      <button class="btn" onclick="petDlg.showModal()">Cadastrar pet</button>
+    </div>
+    <div id="content" class="hidden">
+      <div class="hero">
+        <div class="logo"><svg class="paw"><use href="#paw"/></svg></div>
+        <div><h2 id="pName"></h2><p id="pInfo"></p></div>
+        <button class="del" id="delPet">Excluir pet</button>
+      </div>
+      <nav class="tabs" id="tabs"></nav>
+      <div class="panel" id="panel"></div>
+    </div>
+  </main>
+</section>
+
+<dialog id="petDlg">
+  <h3>Novo pet</h3>
+  <form id="petForm" method="dialog">
+    <div class="field"><label>Nome</label><input id="pn" required maxlength="40"></div>
+    <div class="field"><label>Espécie</label>
+      <select id="ps"><option>Cachorro</option><option>Gato</option><option>Outro</option></select></div>
+    <div class="field"><label>Nascimento (opcional)</label><input id="pb" type="date"></div>
+    <div class="row"><button type="button" class="btn ghost" onclick="petDlg.close()">Cancelar</button><button class="btn">Salvar</button></div>
+  </form>
+</dialog>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyDPCACpVO_RQy8nDAHI9MJFbfk6Tk2CyiE",
+  authDomain: "teste-81cfa.firebaseapp.com",
+  projectId: "teste-81cfa",
+  storageBucket: "teste-81cfa.firebasestorage.app",
+  messagingSenderId: "795617376125",
+  appId: "1:795617376125:web:f0c5c09bd49a6691843e14"
+});
+const auth = getAuth(app), db = getFirestore(app);
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- auth ---------- */
+let mode = "in";
+const setMode = m => {
+  mode = m;
+  $("tIn").classList.toggle("on", m === "in"); $("tUp").classList.toggle("on", m === "up");
+  $("authBtn").textContent = m === "in" ? "Entrar" : "Criar conta";
+  $("pw").autocomplete = m === "in" ? "current-password" : "new-password";
+  $("authErr").classList.add("hidden");
+};
+$("tIn").onclick = () => setMode("in"); $("tUp").onclick = () => setMode("up");
+const msgs = {
+  "auth/invalid-credential": "E-mail ou senha incorretos.", "auth/email-already-in-use": "Este e-mail já está cadastrado.",
+  "auth/weak-password": "A senha precisa ter pelo menos 6 caracteres.", "auth/invalid-email": "E-mail inválido.",
+  "auth/popup-closed-by-user": "Login cancelado.", "auth/too-many-requests": "Muitas tentativas. Tente mais tarde.",
+  "auth/operation-not-allowed": "Método de login não habilitado no Firebase."
+};
+const showErr = e => { const b = $("authErr"); b.textContent = msgs[e.code] || "Algo deu errado. Tente novamente."; b.classList.remove("hidden"); };
+$("authForm").onsubmit = async e => {
+  e.preventDefault();
+  try {
+    const f = mode === "in" ? signInWithEmailAndPassword : createUserWithEmailAndPassword;
+    await f(auth, $("em").value.trim(), $("pw").value);
+  } catch (err) { showErr(err); }
+};
+$("gBtn").onclick = async () => { try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (err) { showErr(err); } };
+$("out").onclick = () => signOut(auth);
+
+/* ---------- estado ---------- */
+let uid = null, pets = [], petId = null, records = [], tab = "vacina", unsubPets = null, unsubRec = null;
+const TABS = {
+  vacina: { label: "Vacinas", title: "Vacinas", sub: "Registre cada dose e quando é a próxima.", name: "Nome da vacina", ph: "Ex.: V10, Antirrábica", d1: "Data da vacinação", d2: "Data da revacinação" },
+  vermifugo: { label: "Vermífugos", title: "Vermífugos", sub: "Controle das vermifugações.", name: "Nome do vermífugo", ph: "Ex.: Drontal", d1: "Data da aplicação", d2: "Próxima dose (opcional)" },
+  antipulgas: { label: "Antipulgas e carrapatos", title: "Antipulgas e carrapatos", sub: "Proteção contra pulgas e carrapatos.", name: "Nome do produto", ph: "Ex.: Bravecto, Nexgard", d1: "Data da aplicação", d2: "Próxima aplicação (opcional)" }
+};
+const today = () => new Date().toISOString().slice(0, 10);
+const addDays = (iso, n) => { const d = new Date(iso + "T12:00:00"); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+const fmt = iso => iso ? iso.split("-").reverse().join("/") : "";
+
+onAuthStateChanged(auth, u => {
+  if (unsubPets) unsubPets(); if (unsubRec) unsubRec();
+  if (!u) { uid = null; $("app").classList.add("hidden"); $("auth").classList.remove("hidden"); return; }
+  uid = u.uid; petId = null;
+  $("who").textContent = u.displayName || u.email;
+  $("auth").classList.add("hidden"); $("app").classList.remove("hidden");
+  unsubPets = onSnapshot(query(collection(db, "users", uid, "pets"), orderBy("createdAt")), s => {
+    pets = s.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (!pets.find(p => p.id === petId)) petId = pets[0]?.id || null;
+    renderPets(); watchRecords();
+  });
+});
+
+function watchRecords() {
+  if (unsubRec) unsubRec(); records = [];
+  if (!petId) return renderContent();
+  unsubRec = onSnapshot(collection(db, "users", uid, "pets", petId, "records"), s => {
+    records = s.docs.map(d => ({ id: d.id, ...d.data() })); renderContent();
+  });
+}
+
+/* ---------- pets ---------- */
+function renderPets() {
+  $("pets").innerHTML = pets.map(p => `<button class="pet ${p.id === petId ? "on" : ""}" data-id="${p.id}"><svg class="paw" style="font-size:16px"><use href="#paw"/></svg>${esc(p.name)}</button>`).join("");
+  $("pets").querySelectorAll(".pet").forEach(b => b.onclick = () => { petId = b.dataset.id; renderPets(); watchRecords(); });
+  $("empty").classList.toggle("hidden", pets.length > 0);
+  $("content").classList.toggle("hidden", pets.length === 0);
+}
+$("addPet").onclick = () => $("petDlg").showModal();
+$("petForm").onsubmit = async () => {
+  const data = { name: $("pn").value.trim(), species: $("ps").value, birth: $("pb").value || "", createdAt: serverTimestamp() };
+  $("petForm").reset();
+  const r = await addDoc(collection(db, "users", uid, "pets"), data); petId = r.id;
+};
+$("delPet").onclick = async () => {
+  const p = pets.find(x => x.id === petId); if (!p) return;
+  if (!confirm(`Excluir ${p.name} e todo o histórico dele?`)) return;
+  const snap = await getDocs(collection(db, "users", uid, "pets", petId, "records"));
+  await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
+  await deleteDoc(doc(db, "users", uid, "pets", petId));
+};
+
+/* ---------- conteúdo ---------- */
+function renderContent() {
+  const p = pets.find(x => x.id === petId); if (!p) return;
+  $("pName").textContent = p.name;
+  $("pInfo").textContent = p.species + (p.birth ? " · nasceu em " + fmt(p.birth) : "");
+  $("tabs").innerHTML = Object.entries(TABS).map(([k, t]) => {
+    const n = records.filter(r => r.type === k).length;
+    return `<button class="${k === tab ? "on" : ""}" data-t="${k}">${t.label}<span>${n} ${n === 1 ? "registro" : "registros"}</span></button>`;
+  }).join("");
+  $("tabs").querySelectorAll("button").forEach(b => b.onclick = () => { tab = b.dataset.t; renderContent(); });
+  renderPanel();
+}
+
+function status(next) {
+  if (!next) return "";
+  const t = today();
+  if (next < t) return `<span class="badge b-late">Atrasada</span>`;
+  if (next <= addDays(t, 7)) return `<span class="badge b-soon">Em breve</span>`;
+  return `<span class="badge b-ok">Em dia</span>`;
+}
+
+function renderPanel() {
+  const T = TABS[tab], isV = tab === "vacina";
+  const list = records.filter(r => r.type === tab).sort((a, b) => b.date.localeCompare(a.date));
+  $("panel").innerHTML = `
+    <h3>${T.title}</h3><p class="sub">${T.sub}</p>
+    <form id="rf"><div class="grid">
+      <div class="field full"><label>${T.name}</label><input id="rn" required maxlength="60" placeholder="${T.ph}"></div>
+      <div class="field full"><label>Marca</label><input id="rb" required maxlength="60" placeholder="Ex.: Zoetis, MSD, Boehringer"></div>
+      <div class="field"><label>${T.d1}</label><input id="rd" type="date" required value="${today()}"></div>
+      <div class="field"><label>${T.d2}</label><input id="rx" type="date" ${isV ? "required" : ""}>
+        ${isV ? `<p class="hint" id="rh">Sugerida: 21 dias depois. Você pode alterar.</p>` : ""}</div>
+      <div class="field full"><label>Observações (opcional)</label><input id="ro" maxlength="200" placeholder="Lote, veterinário, peso..."></div>
+    </div><button class="btn">Adicionar</button></form>
+    <div class="list"><h4>Histórico</h4>
+      ${list.length ? list.map(r => `
+        <div class="item ${r.nextDate && r.nextDate < today() ? "late" : ""}">
+          <div class="info"><b>${esc(r.name)}</b> <span class="brandtag">· ${esc(r.brand)}</span>
+            <div class="dates"><span><em>${isV ? "Vacinada em" : "Aplicado em"}</em> ${fmt(r.date)}</span>${r.nextDate ? `<span><em>Próxima</em> ${fmt(r.nextDate)}</span>` : ""}</div>
+            ${r.notes ? `<div class="note">${esc(r.notes)}</div>` : ""}${status(r.nextDate)}</div>
+          <button class="x" title="Excluir" data-id="${r.id}">&times;</button>
+        </div>`).join("") : `<div class="none">Nada por aqui ainda.</div>`}
+    </div>`;
+  const rd = $("rd"), rx = $("rx"); let manual = false;
+  const sync = () => { if (isV && !manual && rd.value) rx.value = addDays(rd.value, 21); };
+  rd.oninput = sync; rx.oninput = () => { manual = true; };
+  sync();
+  $("rf").onsubmit = async e => {
+    e.preventDefault();
+    await addDoc(collection(db, "users", uid, "pets", petId, "records"), {
+      type: tab, name: $("rn").value.trim(), brand: $("rb").value.trim(), date: rd.value,
+      nextDate: rx.value || "", notes: $("ro").value.trim(), createdAt: serverTimestamp()
+    });
+  };
+  $("panel").querySelectorAll(".x").forEach(b => b.onclick = async () => {
+    if (confirm("Excluir este registro?")) await deleteDoc(doc(db, "users", uid, "pets", petId, "records", b.dataset.id));
+  });
+}
+</script>
+</body>
+</html>
