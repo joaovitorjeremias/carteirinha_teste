@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Carteirinha Pet</title>
+<title>Agro do Jair - Carteirinha</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#005e3a">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Carteirinha">
+<meta name="apple-mobile-web-app-title" content="Agro do Jair - Carteirinha">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
@@ -168,7 +168,7 @@ dialog[open]::backdrop{animation:fadeUp .3s}
 <section id="auth"><svg class="paw bgpaw" style="left:8%;top:12%;font-size:46px;--r:-20deg;animation-delay:-0s"><use href="#paw"/></svg><svg class="paw bgpaw" style="left:80%;top:10%;font-size:34px;--r:25deg;animation-delay:-2s"><use href="#paw"/></svg><svg class="paw bgpaw" style="left:88%;top:58%;font-size:54px;--r:15deg;animation-delay:-4s"><use href="#paw"/></svg><svg class="paw bgpaw" style="left:6%;top:72%;font-size:40px;--r:-10deg;animation-delay:-1s"><use href="#paw"/></svg><svg class="paw bgpaw" style="left:45%;top:88%;font-size:30px;--r:30deg;animation-delay:-3s"><use href="#paw"/></svg><svg class="paw bgpaw" style="left:60%;top:6%;font-size:26px;--r:-30deg;animation-delay:-5s"><use href="#paw"/></svg>
   <div class="auth-card">
     <div class="logo"><svg class="paw"><use href="#paw"/></svg></div>
-    <h1>Carteirinha Pet</h1>
+    <h1>Agro do Jair<br>Carteirinha</h1>
     <p>A saúde do seu bichinho, sempre em dia.</p>
     <div class="seg">
       <button id="tIn" class="on" type="button">Entrar</button>
@@ -207,7 +207,7 @@ dialog[open]::backdrop{animation:fadeUp .3s}
 <!-- APP -->
 <section id="app" class="hidden">
   <header>
-    <div class="brand"><svg class="paw"><use href="#paw"/></svg>Carteirinha Pet</div>
+    <div class="brand"><svg class="paw"><use href="#paw"/></svg>Agro do Jair - Carteirinha</div>
     <span id="who" style="font-size:14px;opacity:.85"></span>
     <button class="btn ghost hidden" id="admBtn">Administração</button>
     <button class="btn ghost" id="out">Sair</button>
@@ -707,9 +707,9 @@ async function openPet(id) {
 
 /* ---------- mensagens de WhatsApp ---------- */
 const DEF = {
-  vacina: "Olá, {tutor}! Aqui é da Carteirinha Pet. A vacina de {pet} estava prevista para {data} e já passou. Vamos agendar a revacinação?",
-  vermifugo: "Olá, {tutor}! Aqui é da Carteirinha Pet. O vermífugo de {pet} estava previsto para {data} e já passou. Vamos manter a vermifugação em dia?",
-  antipulgas: "Olá, {tutor}! Aqui é da Carteirinha Pet. O antipulgas e carrapatos de {pet} estava previsto para {data} e já passou. Vamos renovar a proteção?"
+  vacina: "Olá, {tutor}! Aqui é da Agro do Jair. A vacina de {pet} estava prevista para {data} e já passou. Vamos agendar a revacinação?",
+  vermifugo: "Olá, {tutor}! Aqui é da Agro do Jair. O vermífugo de {pet} estava previsto para {data} e já passou. Vamos manter a vermifugação em dia?",
+  antipulgas: "Olá, {tutor}! Aqui é da Agro do Jair. O antipulgas e carrapatos de {pet} estava previsto para {data} e já passou. Vamos renovar a proteção?"
 };
 const WL = { vacina: "vacina", vermifugo: "vermífugo", antipulgas: "antipulgas" };
 const msgOf = k => (A.m && A.m[k]) || DEF[k];
