@@ -92,7 +92,7 @@ dialog{border:0;border-radius:28px;background:var(--card);color:var(--brown);pad
 dialog::backdrop{background:rgba(76,55,26,.45)}
 dialog h3{color:var(--green);font-size:22px;margin-bottom:16px}
 .row{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
-@media(max-width:560px){.grid{grid-template-columns:1fr}nav.tabs button{font-size:14px;padding:10px 4px}.hero .del{display:none}}
+@media(max-width:560px){.grid{grid-template-columns:1fr}nav.tabs button{font-size:14px;padding:10px 4px}#delPet{display:none}#tabs{grid-template-columns:repeat(2,1fr)}}
 
 #verify{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
@@ -114,6 +114,7 @@ nav.tabs.two{grid-template-columns:repeat(2,1fr)}
 .sec{font-family:Fredoka,sans-serif;font-weight:500;color:var(--green);margin:16px 0 4px;font-size:17px}
 .rrow{padding:8px 0;border-bottom:2px dashed var(--line)}
 @media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}}
+#tabs{grid-template-columns:repeat(4,1fr)}
 /* animacoes */
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 @keyframes pop{0%{opacity:0;transform:scale(.92) translateY(12px)}60%{transform:scale(1.015)}100%{opacity:1;transform:none}}
@@ -153,7 +154,9 @@ dialog[open]::backdrop{animation:fadeUp .3s}
 </head>
 <body>
 
-<svg width="0" height="0" style="position:absolute"><symbol id="paw" viewBox="0 0 24 24"><ellipse cx="5.2" cy="10" rx="2.2" ry="2.9"/><ellipse cx="9.4" cy="5.6" rx="2.2" ry="2.9"/><ellipse cx="14.6" cy="5.6" rx="2.2" ry="2.9"/><ellipse cx="18.8" cy="10" rx="2.2" ry="2.9"/><path d="M12 11c-3.3 0-6 2.7-6 5.6 0 2 1.6 3 3.2 3 1 0 1.8-.4 2.8-.4s1.8.4 2.8.4c1.6 0 3.2-1 3.2-3 0-2.9-2.7-5.6-6-5.6z"/></symbol></svg>
+<svg width="0" height="0" style="position:absolute"><symbol id="paw" viewBox="0 0 24 24"><ellipse cx="5.2" cy="10" rx="2.2" ry="2.9"/><ellipse cx="9.4" cy="5.6" rx="2.2" ry="2.9"/><ellipse cx="14.6" cy="5.6" rx="2.2" ry="2.9"/><ellipse cx="18.8" cy="10" rx="2.2" ry="2.9"/><path d="M12 11c-3.3 0-6 2.7-6 5.6 0 2 1.6 3 3.2 3 1 0 1.8-.4 2.8-.4s1.8.4 2.8.4c1.6 0 3.2-1 3.2-3 0-2.9-2.7-5.6-6-5.6z"/></symbol>
+<symbol id="cat" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M4 3l5 3.2a9 9 0 0 1 6 0L20 3v8.5a8 8 0 0 1-16 0zM8.8 10.3a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4zM15.2 10.3a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4zM10.6 14.4h2.8L12 15.9z"/></symbol>
+<symbol id="dog" viewBox="0 0 24 24"><path d="M6.2 6.2C3.6 5.8 2 8.5 2.5 12.5c.2 1.6 1.6 2.3 3 1.5z"/><path d="M17.8 6.2c2.6-.4 4.2 2.3 3.7 6.3-.2 1.6-1.6 2.3-3 1.5z"/><path fill-rule="evenodd" d="M12 6.2a6.5 6.8 0 1 0 0 13.6 6.5 6.8 0 0 0 0-13.6zM9.2 11.2a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM14.8 11.2a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2zM10.4 15.4h3.2L12 17z"/></symbol></svg>
 
 <!-- LOGIN -->
 <section id="auth"><svg class="paw bgpaw" style="left:8%;top:12%;font-size:46px;--r:-20deg;animation-delay:-0s"><use href="#paw"/></svg><svg class="paw bgpaw" style="left:80%;top:10%;font-size:34px;--r:25deg;animation-delay:-2s"><use href="#paw"/></svg><svg class="paw bgpaw" style="left:88%;top:58%;font-size:54px;--r:15deg;animation-delay:-4s"><use href="#paw"/></svg><svg class="paw bgpaw" style="left:6%;top:72%;font-size:40px;--r:-10deg;animation-delay:-1s"><use href="#paw"/></svg><svg class="paw bgpaw" style="left:45%;top:88%;font-size:30px;--r:30deg;animation-delay:-3s"><use href="#paw"/></svg><svg class="paw bgpaw" style="left:60%;top:6%;font-size:26px;--r:-30deg;animation-delay:-5s"><use href="#paw"/></svg>
@@ -216,9 +219,10 @@ dialog[open]::backdrop{animation:fadeUp .3s}
     </div>
     <div id="content" class="hidden">
       <div class="hero">
-        <div class="logo"><svg class="paw"><use href="#paw"/></svg></div>
+        <div class="logo"><svg class="paw"><use id="pIco" href="#paw"/></svg></div>
         <div><h2 id="pName"></h2><p id="pInfo"></p></div>
-        <button class="del" id="delPet">Excluir pet</button>
+        <button class="del" id="editPet" style="margin-left:auto">Editar</button>
+        <button class="del" id="delPet" style="margin-left:0">Excluir pet</button>
       </div>
       <nav class="tabs" id="tabs"></nav>
       <div class="panel" id="panel"></div>
@@ -266,7 +270,7 @@ dialog[open]::backdrop{animation:fadeUp .3s}
 </dialog>
 
 <dialog id="petDlg">
-  <h3>Novo pet</h3>
+  <h3 id="petT">Novo pet</h3>
   <form id="petForm" method="dialog">
     <div class="field"><label>Nome</label><input id="pn" required maxlength="40"></div>
     <div class="field"><label>Espécie</label>
@@ -362,7 +366,8 @@ let fresh = true, seen = new Set(), uid = null, pets = [], petId = null, records
 const TABS = {
   vacina: { label: "Vacinas", title: "Vacinas", sub: "Registre cada dose e quando é a próxima.", name: "Vacina e marca", ph: "Ex.: V10 Zoetis", d1: "Data da vacinação", d2: "Data da revacinação" },
   vermifugo: { label: "Vermífugos", title: "Vermífugos", sub: "Controle das vermifugações.", name: "Vermífugo e marca", ph: "Ex.: Drontal Bayer", d1: "Data da aplicação", d2: "Próxima dose (opcional)" },
-  antipulgas: { label: "Antipulgas e carrapatos", title: "Antipulgas e carrapatos", sub: "Proteção contra pulgas e carrapatos.", name: "Produto e marca", ph: "Ex.: Bravecto MSD", d1: "Data da aplicação", d2: "Próxima aplicação (opcional)" }
+  antipulgas: { label: "Antipulgas e carrapatos", title: "Antipulgas e carrapatos", sub: "Proteção contra pulgas e carrapatos.", name: "Produto e marca", ph: "Ex.: Bravecto MSD", d1: "Data da aplicação", d2: "Próxima aplicação (opcional)" },
+  peso: { label: "Peso", title: "Peso", sub: "Acompanhe o peso ao longo do tempo.", d1: "Data da pesagem" }
 };
 const today = () => new Date().toISOString().slice(0, 10);
 const addDays = (iso, n) => { const d = new Date(iso + "T12:00:00"); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
@@ -451,15 +456,26 @@ function watchRecords() {
 
 /* ---------- pets ---------- */
 function renderPets() {
-  $("pets").innerHTML = pets.map(p => `<button class="pet ${p.id === petId ? "on" : ""}" data-id="${p.id}"><svg class="paw" style="font-size:16px"><use href="#paw"/></svg>${esc(p.name)}</button>`).join("");
+  $("pets").innerHTML = pets.map(p => `<button class="pet ${p.id === petId ? "on" : ""}" data-id="${p.id}"><svg class="paw" style="font-size:19px"><use href="#${ico(p.species)}"/></svg>${esc(p.name)}</button>`).join("");
   $("pets").querySelectorAll(".pet").forEach(b => b.onclick = () => { petId = b.dataset.id; fresh = true; renderPets(); watchRecords(); });
   $("empty").classList.toggle("hidden", pets.length > 0);
   $("content").classList.toggle("hidden", pets.length === 0);
 }
-$("addPet").onclick = () => $("petDlg").showModal();
+let editing = null;
+$("addPet").onclick = () => { editing = null; $("petForm").reset(); $("petDlg").showModal(); };
+$("editPet").onclick = () => {
+  const p = pets.find(x => x.id === petId); if (!p) return;
+  editing = p.id; $("petT").textContent = "Editar pet";
+  $("pn").value = p.name; $("ps").value = p.species; $("pb").value = p.birth || ""; $("petDlg").showModal();
+};
+$("petDlg").addEventListener("close", () => { editing = null; $("petT").textContent = "Novo pet"; });
 $("petForm").onsubmit = async () => {
   const data = { name: $("pn").value.trim(), species: $("ps").value, birth: $("pb").value || "" };
-  $("petForm").reset();
+  const ed = editing; $("petForm").reset();
+  if (ed) {
+    await setDoc(doc(db, "users", uid, "pets", ed), data, { merge: true });
+    await pushIdx(ed, data, records); renderContent(); return;
+  }
   const ref = doc(collection(db, "users", uid, "pets")); petId = ref.id;
   await setDoc(ref, { ...data, idx: true, createdAt: serverTimestamp() });
   await pushIdx(ref.id, data, []);
@@ -474,10 +490,23 @@ $("delPet").onclick = async () => {
 };
 
 /* ---------- conteúdo ---------- */
+const ico = sp => sp === "Gato" ? "cat" : sp === "Cachorro" ? "dog" : "paw";
+function ageText(b) {
+  const bd = new Date(b + "T12:00:00"), n = new Date();
+  if (bd > n) return "";
+  let m = (n.getFullYear() - bd.getFullYear()) * 12 + n.getMonth() - bd.getMonth();
+  if (n.getDate() < bd.getDate()) m--;
+  if (m < 6) { const w = Math.floor((n - bd) / 604800000); return w < 1 ? "menos de 1 semana" : `${w} ${w === 1 ? "semana" : "semanas"}`; }
+  const y = Math.floor(m / 12), mm = m % 12, o = [];
+  if (y) o.push(`${y} ${y === 1 ? "ano" : "anos"}`);
+  if (mm) o.push(`${mm} ${mm === 1 ? "mês" : "meses"}`);
+  return o.join(" e ");
+}
 function renderContent() {
   const p = pets.find(x => x.id === petId); if (!p) return;
-  $("pName").textContent = p.name;
-  $("pInfo").textContent = p.species + (p.birth ? " · nasceu em " + fmt(p.birth) : "");
+  $("pName").textContent = p.name; $("pIco").setAttribute("href", "#" + ico(p.species));
+  const lw = records.filter(x => x.type === "peso").sort((a, b) => b.date.localeCompare(a.date))[0];
+  $("pInfo").textContent = [p.species, p.birth ? ageText(p.birth) : "", lw ? lw.name : ""].filter(Boolean).join(" · ");
   $("tabs").innerHTML = Object.entries(TABS).map(([k, t]) => {
     const n = records.filter(r => r.type === k).length;
     return `<button class="${k === tab ? "on" : ""}" data-t="${k}">${t.label}<span>${n} ${n === 1 ? "registro" : "registros"}</span></button>`;
@@ -495,7 +524,7 @@ function status(next) {
 }
 
 function renderPanel() {
-  const T = TABS[tab], isV = tab === "vacina";
+  const T = TABS[tab], isV = tab === "vacina", isW = tab === "peso";
   const list = records.filter(r => r.type === tab).sort((a, b) => b.date.localeCompare(a.date));
   const lat = new Set(), sn = new Set();
   list.forEach(r => { const k = r.name.trim().toLowerCase(); if (!sn.has(k)) { sn.add(k); lat.add(r.id); } });
@@ -505,17 +534,17 @@ function renderPanel() {
   $("panel").innerHTML = `
     <h3>${T.title}</h3><p class="sub">${T.sub}</p>
     <form id="rf"><div class="grid">
-      <div class="field full"><label>${T.name}</label><input id="rn" required maxlength="60" placeholder="${T.ph}"></div>
+      ${isW ? `<div class="field"><label>Peso (kg)</label><input id="rn" type="number" step="0.01" min="0.01" max="500" inputmode="decimal" required placeholder="Ex.: 12.5"></div>` : `<div class="field full"><label>${T.name}</label><input id="rn" required maxlength="60" placeholder="${T.ph}"></div>`}
       <div class="field"><label>${T.d1}</label><input id="rd" type="date" required value="${today()}"></div>
-      <div class="field"><label>${T.d2}</label><input id="rx" type="date" ${isV ? "required" : ""}>
-        ${isV ? `<p class="hint" id="rh">Sugerida: 21 dias depois. Você pode alterar.</p>` : ""}</div>
+      ${isW ? `<input id="rx" type="hidden">` : `<div class="field"><label>${T.d2}</label><input id="rx" type="date" ${isV ? "required" : ""}>
+        ${isV ? `<p class="hint" id="rh">Sugerida: 21 dias depois. Você pode alterar.</p>` : ""}</div>`}
       <div class="field full"><label>Observações (opcional)</label><input id="ro" maxlength="200" placeholder="Lote, veterinário, peso..."></div>
     </div><button class="btn">Adicionar</button></form>
     <div class="list"><h4>Histórico</h4>
       ${list.length ? list.map(r => `
         <div style="--i:${n++}" class="item ${cls(r)} ${lat.has(r.id) && r.nextDate && r.nextDate < today() ? "late" : ""}">
           <div class="info"><b>${esc(r.name)}</b>
-            <div class="dates"><span><em>${isV ? "Vacinada em" : "Aplicado em"}</em> ${fmt(r.date)}</span>${r.nextDate ? `<span><em>Próxima</em> ${fmt(r.nextDate)}</span>` : ""}</div>
+            <div class="dates"><span><em>${isV ? "Vacinada em" : isW ? "Pesado em" : "Aplicado em"}</em> ${fmt(r.date)}</span>${r.nextDate ? `<span><em>Próxima</em> ${fmt(r.nextDate)}</span>` : ""}</div>
             ${r.notes ? `<div class="note">${esc(r.notes)}</div>` : ""}${lat.has(r.id) ? status(r.nextDate) : ""}</div>
           <button class="x" title="Excluir" data-id="${r.id}">&times;</button>
         </div>`).join("") : `<div class="none">Nada por aqui ainda.</div>`}
@@ -526,7 +555,8 @@ function renderPanel() {
   sync();
   $("rf").onsubmit = async e => {
     e.preventDefault();
-    const rec = { type: tab, name: $("rn").value.trim(), date: rd.value, nextDate: rx.value || "", notes: $("ro").value.trim() };
+    const raw = $("rn").value.trim(), kg = isW ? Number(raw) : 0;
+    const rec = { type: tab, name: kg ? `${String(kg).replace(".", ",")} kg` : raw, ...(kg ? { kg } : {}), date: rd.value, nextDate: rx.value || "", notes: $("ro").value.trim() };
     const p = pets.find(x => x.id === petId), id = petId, prev = records;
     await addDoc(collection(db, "users", uid, "pets", id, "records"), { ...rec, createdAt: serverTimestamp() });
     await pushIdx(id, p, prev.concat([rec]));
@@ -637,8 +667,8 @@ function admRender() {
     }).sort((a, b) => norm(a.name).localeCompare(norm(b.name)));
     res.innerHTML = l.slice(0, shown).map(p => {
       const o = A.u[p.o] || {}, late = Object.keys(LBL).filter(k => isLate(p, k));
-      const bd = late.length ? late.map(k => `<span class="badge b-late">${LBL[k]}</span>`).join("") : (Object.values(p.c || {}).some(Boolean) ? `<span class="badge b-ok">Em dia</span>` : `<span class="badge b-soon">Sem registros</span>`);
-      return `<div class="item"><div class="info"><b>${esc(p.name)}</b> <span class="brandtag">· ${esc(p.sp)}</span>
+      const bd = late.length ? late.map(k => `<span class="badge b-late">${LBL[k]}</span>`).join("") : (Object.keys(LBL).some(k => p.c && p.c[k]) ? `<span class="badge b-ok">Em dia</span>` : `<span class="badge b-soon">Sem registros</span>`);
+      return `<div class="item"><div class="info"><svg class="paw" style="font-size:19px;vertical-align:-4px;color:var(--green)"><use href="#${ico(p.sp)}"/></svg> <b>${esc(p.name)}</b> <span class="brandtag">· ${esc(p.sp)}</span>
         <div class="note">Tutor: ${esc(o.name || "?")} · ${tel(o)}</div><div class="badges">${bd}</div>${waBtns(p)}</div><button class="btn soft" data-pet="${p.id}">Ver</button></div>`;
     }).join("") + more(l) || `<div class="none">Nenhum animal encontrado.</div>`;
   }
