@@ -93,6 +93,60 @@ dialog::backdrop{background:rgba(76,55,26,.45)}
 dialog h3{color:var(--green);font-size:22px;margin-bottom:16px}
 .row{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
 @media(max-width:560px){.grid{grid-template-columns:1fr}nav.tabs button{font-size:14px;padding:10px 4px}.hero .del{display:none}}
+
+#verify{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}
+.stat{background:var(--card);border-radius:20px;padding:12px;text-align:center;box-shadow:0 4px 0 var(--line)}
+.stat b{display:block;font-family:Fredoka,sans-serif;font-size:26px;color:var(--green);font-weight:500}
+.stat span{font-size:12px;color:var(--brown2);font-weight:700}
+nav.tabs.two{grid-template-columns:repeat(2,1fr)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.chip{border:2px solid var(--line);background:var(--card);color:var(--brown);border-radius:999px;padding:4px 12px;font-weight:700;font-size:13px;transition:.2s}
+.chip.late{background:var(--brown2);border-color:var(--brown2);color:#fff}
+.chip:hover{background:var(--lime);border-color:var(--lime);color:var(--green);transform:translateY(-2px)}
+.tel{color:var(--green);font-weight:700;text-decoration:none}
+.badges .badge{margin:6px 6px 0 0}
+.more{display:block;margin:16px auto 0}
+#infoDlg{width:min(520px,94vw)}
+#idB{max-height:60vh;overflow:auto;margin-bottom:12px}
+.sec{font-family:Fredoka,sans-serif;font-weight:500;color:var(--green);margin:16px 0 4px;font-size:17px}
+.rrow{padding:8px 0;border-bottom:2px dashed var(--line)}
+@media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}}
+/* animacoes */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{opacity:0;transform:scale(.92) translateY(12px)}60%{transform:scale(1.015)}100%{opacity:1;transform:none}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-22px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes slideOut{to{opacity:0;transform:translateX(30px) scale(.95)}}
+@keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-9deg)}75%{transform:rotate(9deg)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes drift{0%{transform:translateY(0) rotate(var(--r))}50%{transform:translateY(-26px) rotate(calc(var(--r) + 12deg))}100%{transform:translateY(0) rotate(var(--r))}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(175,217,83,.7)}50%{box-shadow:0 0 0 7px rgba(175,217,83,0)}}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.auth-card{animation:pop .6s cubic-bezier(.3,1.4,.5,1) both}
+.logo{animation:bob 3s ease-in-out infinite}
+.logo:hover{animation:wiggle .5s}
+.bgpaw{position:absolute;color:var(--lime);opacity:.35;animation:drift 7s ease-in-out infinite;pointer-events:none}
+#auth{position:relative;overflow:hidden}
+.auth-card{position:relative;z-index:1}
+.err:not(.hidden){animation:shake .4s}
+.btn:active,.gbtn:active,.pet:active{transform:scale(.95)}
+.pet,.gbtn,nav.tabs button{transition:transform .2s cubic-bezier(.3,1.5,.5,1),background .2s,border-color .2s,color .2s}
+.pet:hover,nav.tabs button:hover{transform:translateY(-3px) rotate(-1deg)}
+.pet.on .paw{animation:wiggle .6s}
+.hero.pop,.panel.pop,.empty{animation:pop .5s cubic-bezier(.3,1.3,.5,1) both}
+.hero .logo{animation:bob 3s ease-in-out infinite}
+.field input,.field select{transition:border-color .2s,transform .2s,box-shadow .2s}
+input:focus,select:focus{transform:translateY(-2px);box-shadow:0 6px 0 rgba(175,217,83,.35)}
+.item{transition:transform .2s,box-shadow .2s}
+.item:hover{transform:translateX(4px) rotate(-.4deg);box-shadow:0 6px 14px rgba(76,55,26,.1)}
+.item.in{animation:slideIn .45s cubic-bezier(.3,1.2,.5,1) both;animation-delay:calc(var(--i,0) * 60ms)}
+.item.out{animation:slideOut .28s ease-in forwards}
+.b-soon{animation:pulse 1.8s infinite}
+.x{transition:transform .2s,background .2s}
+.x:hover{transform:rotate(90deg)}
+dialog[open]{animation:pop .35s cubic-bezier(.3,1.4,.5,1)}
+dialog[open]::backdrop{animation:fadeUp .3s}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
@@ -100,7 +154,7 @@ dialog h3{color:var(--green);font-size:22px;margin-bottom:16px}
 <svg width="0" height="0" style="position:absolute"><symbol id="paw" viewBox="0 0 24 24"><ellipse cx="5.2" cy="10" rx="2.2" ry="2.9"/><ellipse cx="9.4" cy="5.6" rx="2.2" ry="2.9"/><ellipse cx="14.6" cy="5.6" rx="2.2" ry="2.9"/><ellipse cx="18.8" cy="10" rx="2.2" ry="2.9"/><path d="M12 11c-3.3 0-6 2.7-6 5.6 0 2 1.6 3 3.2 3 1 0 1.8-.4 2.8-.4s1.8.4 2.8.4c1.6 0 3.2-1 3.2-3 0-2.9-2.7-5.6-6-5.6z"/></symbol></svg>
 
 <!-- LOGIN -->
-<section id="auth">
+<section id="auth"><svg class="paw bgpaw" style="left:8%;top:12%;font-size:46px;--r:-20deg;animation-delay:-0s"><use href="#paw"/></svg><svg class="paw bgpaw" style="left:80%;top:10%;font-size:34px;--r:25deg;animation-delay:-2s"><use href="#paw"/></svg><svg class="paw bgpaw" style="left:88%;top:58%;font-size:54px;--r:15deg;animation-delay:-4s"><use href="#paw"/></svg><svg class="paw bgpaw" style="left:6%;top:72%;font-size:40px;--r:-10deg;animation-delay:-1s"><use href="#paw"/></svg><svg class="paw bgpaw" style="left:45%;top:88%;font-size:30px;--r:30deg;animation-delay:-3s"><use href="#paw"/></svg><svg class="paw bgpaw" style="left:60%;top:6%;font-size:26px;--r:-30deg;animation-delay:-5s"><use href="#paw"/></svg>
   <div class="auth-card">
     <div class="logo"><svg class="paw"><use href="#paw"/></svg></div>
     <h1>Carteirinha Pet</h1>
@@ -111,6 +165,8 @@ dialog h3{color:var(--green);font-size:22px;margin-bottom:16px}
     </div>
     <div id="authErr" class="err hidden"></div>
     <form id="authForm">
+      <div class="field su hidden"><label>Nome completo</label><input id="nm" maxlength="80" autocomplete="name"></div>
+      <div class="field su hidden"><label>Telefone (com DDD)</label><input id="ph" type="tel" inputmode="tel" autocomplete="tel" placeholder="(51) 99999-9999"></div>
       <div class="field"><label>E-mail</label><input id="em" type="email" required autocomplete="email"></div>
       <div class="field"><label>Senha</label><input id="pw" type="password" minlength="6" required autocomplete="current-password"></div>
       <button class="btn" style="width:100%" id="authBtn">Entrar</button>
@@ -123,14 +179,29 @@ dialog h3{color:var(--green);font-size:22px;margin-bottom:16px}
   </div>
 </section>
 
+<!-- VERIFICAR E-MAIL -->
+<section id="verify" class="hidden">
+  <div class="auth-card">
+    <div class="logo"><svg class="paw"><use href="#paw"/></svg></div>
+    <h1>Confirme seu e-mail</h1>
+    <p>Enviamos um link para <b id="vmail"></b>. Clique nele e volte aqui.</p>
+    <div id="vErr" class="err hidden"></div>
+    <button class="btn" id="vOk" style="width:100%;margin-bottom:10px">Já confirmei</button>
+    <button class="btn soft" id="vRe" style="width:100%;margin-bottom:10px">Reenviar e-mail</button>
+    <button class="btn ghost" id="vOut" style="width:100%">Sair</button>
+    <p style="font-size:12px;margin:14px 0 0">Não achou? Olhe a caixa de spam.</p>
+  </div>
+</section>
+
 <!-- APP -->
 <section id="app" class="hidden">
   <header>
     <div class="brand"><svg class="paw"><use href="#paw"/></svg>Carteirinha Pet</div>
     <span id="who" style="font-size:14px;opacity:.85"></span>
+    <button class="btn ghost hidden" id="admBtn">Administração</button>
     <button class="btn ghost" id="out">Sair</button>
   </header>
-  <main>
+  <main id="home">
     <div class="petbar">
       <div class="pets" id="pets"></div>
       <button class="btn soft" id="addPet">Novo pet</button>
@@ -151,7 +222,35 @@ dialog h3{color:var(--green);font-size:22px;margin-bottom:16px}
       <div class="panel" id="panel"></div>
     </div>
   </main>
+  <main id="admin" class="hidden">
+    <div class="hero">
+      <div class="logo"><svg class="paw"><use href="#paw"/></svg></div>
+      <div><h2>Administração</h2><p id="syncInfo"></p></div>
+      <button class="btn soft" id="syncBtn" style="margin-left:auto">Atualizar</button>
+    </div>
+    <div class="stats" id="stats"></div>
+    <nav class="tabs two">
+      <button id="aU" class="on">Tutores<span>nome, e-mail ou telefone</span></button>
+      <button id="aP">Animais<span>filtros e vacinas atrasadas</span></button>
+    </nav>
+    <div class="panel" id="aPanel"></div>
+  </main>
 </section>
+
+<dialog id="profDlg">
+  <h3>Complete seu cadastro</h3>
+  <form id="profForm">
+    <div class="field"><label>Nome completo</label><input id="cn" required maxlength="80"></div>
+    <div class="field"><label>Telefone (com DDD)</label><input id="cp" type="tel" inputmode="tel" required placeholder="(51) 99999-9999"></div>
+    <div class="row"><button class="btn">Salvar</button></div>
+  </form>
+</dialog>
+
+<dialog id="infoDlg">
+  <h3 id="idT"></h3>
+  <div id="idB"></div>
+  <div class="row"><button type="button" class="btn" onclick="infoDlg.close()">Fechar</button></div>
+</dialog>
 
 <dialog id="petDlg">
   <h3>Novo pet</h3>
@@ -166,8 +265,8 @@ dialog h3{color:var(--green);font-size:22px;margin-bottom:16px}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp, getDocs, setDoc, getDoc, where, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const app = initializeApp({
   apiKey: "AIzaSyDPCACpVO_RQy8nDAHI9MJFbfk6Tk2CyiE",
@@ -189,50 +288,146 @@ const setMode = m => {
   $("authBtn").textContent = m === "in" ? "Entrar" : "Criar conta";
   $("pw").autocomplete = m === "in" ? "current-password" : "new-password";
   $("authErr").classList.add("hidden");
+  document.querySelectorAll(".su").forEach(x => x.classList.toggle("hidden", m === "in"));
+  $("nm").required = $("ph").required = m === "up";
 };
 $("tIn").onclick = () => setMode("in"); $("tUp").onclick = () => setMode("up");
 const msgs = {
   "auth/invalid-credential": "E-mail ou senha incorretos.", "auth/email-already-in-use": "Este e-mail já está cadastrado.",
   "auth/weak-password": "A senha precisa ter pelo menos 6 caracteres.", "auth/invalid-email": "E-mail inválido.",
   "auth/popup-closed-by-user": "Login cancelado.", "auth/too-many-requests": "Muitas tentativas. Tente mais tarde.",
-  "auth/operation-not-allowed": "Método de login não habilitado no Firebase."
+  "auth/operation-not-allowed": "Método de login não habilitado no Firebase.",
+  "app/invalid-profile": "Informe seu nome completo e um telefone válido com DDD.", "auth/network-request-failed": "Sem conexão. Tente novamente."
 };
 const showErr = e => { const b = $("authErr"); b.textContent = msgs[e.code] || "Algo deu errado. Tente novamente."; b.classList.remove("hidden"); };
+let signupP = null, profile = null, view = "home";
+const ADMIN = "eW2c4pVntDZHq0M9Hx7z26CUagw2";
+const digits = v => (v || "").replace(/\D/g, "");
+const okPhone = d => d.length === 10 || d.length === 11;
+const mask = v => { v = digits(v).slice(0, 11); if (v.length > 10) return `(${v.slice(0, 2)}) ${v.slice(2, 7)}-${v.slice(7)}`; if (v.length > 6) return `(${v.slice(0, 2)}) ${v.slice(2, 6)}-${v.slice(6)}`; if (v.length > 2) return `(${v.slice(0, 2)}) ${v.slice(2)}`; return v; };
+const fmtPhone = d => mask(d || "");
+$("ph").oninput = e => e.target.value = mask(e.target.value);
+$("cp").oninput = e => e.target.value = mask(e.target.value);
 $("authForm").onsubmit = async e => {
   e.preventDefault();
+  const email = $("em").value.trim(), pw = $("pw").value;
   try {
-    const f = mode === "in" ? signInWithEmailAndPassword : createUserWithEmailAndPassword;
-    await f(auth, $("em").value.trim(), $("pw").value);
-  } catch (err) { showErr(err); }
+    if (mode === "in") { await signInWithEmailAndPassword(auth, email, pw); return; }
+    const name = $("nm").value.trim(), phone = digits($("ph").value);
+    if (name.length < 3 || !okPhone(phone)) throw { code: "app/invalid-profile" };
+    signupP = (async () => {
+      const c = await createUserWithEmailAndPassword(auth, email, pw);
+      await updateProfile(c.user, { displayName: name });
+      await setDoc(doc(db, "profiles", c.user.uid), { name, email, phone, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+      await sendEmailVerification(c.user);
+    })();
+    await signupP;
+  } catch (err) { showErr(err); } finally { signupP = null; }
 };
 $("gBtn").onclick = async () => { try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (err) { showErr(err); } };
 $("out").onclick = () => signOut(auth);
+$("vOut").onclick = () => signOut(auth);
+const vMsg = t => { const b = $("vErr"); b.textContent = t; b.classList.toggle("hidden", !t); };
+async function checkVerified(silent) {
+  const u = auth.currentUser; if (!u) return;
+  try {
+    await u.reload();
+    if (!u.emailVerified) { if (!silent) vMsg("Ainda não confirmado. Clique no link do e-mail e tente de novo."); return; }
+    await u.getIdToken(true); vMsg(""); await enter(u);
+  } catch (e) { if (!silent) vMsg(msgs[e.code] || "Não foi possível verificar agora."); }
+}
+$("vOk").onclick = () => checkVerified(false);
+window.addEventListener("focus", () => { if (!$("verify").classList.contains("hidden")) checkVerified(true); });
+$("vRe").onclick = async () => {
+  const b = $("vRe"); b.disabled = true;
+  try { await sendEmailVerification(auth.currentUser); vMsg("E-mail reenviado."); } catch (e) { vMsg(msgs[e.code] || "Não foi possível reenviar agora."); }
+  let t = 60; const iv = setInterval(() => { b.textContent = t > 0 ? `Reenviar (${t}s)` : "Reenviar e-mail"; if (t-- <= 0) { clearInterval(iv); b.disabled = false; } }, 1000);
+};
 
 /* ---------- estado ---------- */
-let uid = null, pets = [], petId = null, records = [], tab = "vacina", unsubPets = null, unsubRec = null;
+let fresh = true, seen = new Set(), uid = null, pets = [], petId = null, records = [], tab = "vacina", unsubPets = null, unsubRec = null;
 const TABS = {
-  vacina: { label: "Vacinas", title: "Vacinas", sub: "Registre cada dose e quando é a próxima.", name: "Nome da vacina", ph: "Ex.: V10, Antirrábica", d1: "Data da vacinação", d2: "Data da revacinação" },
-  vermifugo: { label: "Vermífugos", title: "Vermífugos", sub: "Controle das vermifugações.", name: "Nome do vermífugo", ph: "Ex.: Drontal", d1: "Data da aplicação", d2: "Próxima dose (opcional)" },
-  antipulgas: { label: "Antipulgas e carrapatos", title: "Antipulgas e carrapatos", sub: "Proteção contra pulgas e carrapatos.", name: "Nome do produto", ph: "Ex.: Bravecto, Nexgard", d1: "Data da aplicação", d2: "Próxima aplicação (opcional)" }
+  vacina: { label: "Vacinas", title: "Vacinas", sub: "Registre cada dose e quando é a próxima.", name: "Vacina e marca", ph: "Ex.: V10 Zoetis", d1: "Data da vacinação", d2: "Data da revacinação" },
+  vermifugo: { label: "Vermífugos", title: "Vermífugos", sub: "Controle das vermifugações.", name: "Vermífugo e marca", ph: "Ex.: Drontal Bayer", d1: "Data da aplicação", d2: "Próxima dose (opcional)" },
+  antipulgas: { label: "Antipulgas e carrapatos", title: "Antipulgas e carrapatos", sub: "Proteção contra pulgas e carrapatos.", name: "Produto e marca", ph: "Ex.: Bravecto MSD", d1: "Data da aplicação", d2: "Próxima aplicação (opcional)" }
 };
 const today = () => new Date().toISOString().slice(0, 10);
 const addDays = (iso, n) => { const d = new Date(iso + "T12:00:00"); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
 const fmt = iso => iso ? iso.split("-").reverse().join("/") : "";
 
-onAuthStateChanged(auth, u => {
+const show = id => ["auth", "verify", "app"].forEach(x => $(x).classList.toggle("hidden", x !== id));
+const migrating = new Set();
+let watchedId = null;
+onAuthStateChanged(auth, async u => {
+  if (!u) {
+    if (unsubPets) unsubPets(); if (unsubRec) unsubRec();
+    unsubPets = unsubRec = null; uid = null; profile = null; show("auth"); return;
+  }
+  if (signupP) await signupP.catch(() => {});
+  if (!u.emailVerified) { $("vmail").textContent = u.email; show("verify"); return; }
+  await enter(u);
+});
+
+async function loadProfile(u) {
+  const s = await getDoc(doc(db, "profiles", u.uid));
+  if (s.exists() && s.data().name && s.data().phone) return { uid: u.uid, ...s.data() };
+  return new Promise(res => {
+    $("cn").value = u.displayName || ""; $("cp").value = "";
+    $("profDlg").oncancel = e => e.preventDefault();
+    $("profDlg").showModal();
+    $("profForm").onsubmit = async e => {
+      e.preventDefault();
+      const d = { name: $("cn").value.trim(), email: u.email, phone: digits($("cp").value), createdAt: serverTimestamp(), updatedAt: serverTimestamp() };
+      if (d.name.length < 3 || !okPhone(d.phone)) return alert("Informe seu nome completo e um telefone válido com DDD.");
+      await setDoc(doc(db, "profiles", u.uid), d);
+      $("profDlg").close(); res({ uid: u.uid, ...d });
+    };
+  });
+}
+
+async function enter(u) {
   if (unsubPets) unsubPets(); if (unsubRec) unsubRec();
-  if (!u) { uid = null; $("app").classList.add("hidden"); $("auth").classList.remove("hidden"); return; }
-  uid = u.uid; petId = null;
-  $("who").textContent = u.displayName || u.email;
-  $("auth").classList.add("hidden"); $("app").classList.remove("hidden");
+  unsubRec = null; watchedId = null; uid = u.uid; petId = null; pets = []; records = [];
+  if (uid !== ADMIN) localStorage.removeItem(CK);
+  try { if (!profile || profile.uid !== uid) profile = await loadProfile(u); }
+  catch (e) { console.error(e); profile = { uid, name: u.displayName || u.email || "" }; }
+  show("app");
+  $("who").textContent = (profile.name || "").split(" ")[0];
+  $("admBtn").classList.toggle("hidden", uid !== ADMIN);
+  setView("home");
   unsubPets = onSnapshot(query(collection(db, "users", uid, "pets"), orderBy("createdAt")), s => {
     pets = s.docs.map(d => ({ id: d.id, ...d.data() }));
     if (!pets.find(p => p.id === petId)) petId = pets[0]?.id || null;
     renderPets(); watchRecords();
+    pets.filter(p => !p.idx && !migrating.has(p.id)).forEach(migrate);
   });
-});
+}
+
+/* resumo para o painel admin (1 doc por animal, sem precisar ler os registros) */
+function summarize(recs) {
+  const o = { counts: {}, due: {}, last: {} };
+  for (const t of Object.keys(TABS)) {
+    const rs = recs.filter(r => r.type === t), lt = {};
+    rs.forEach(r => { const k = r.name.trim().toLowerCase(); if (!lt[k] || r.date > lt[k].date) lt[k] = r; });
+    o.counts[t] = rs.length;
+    o.due[t] = Object.values(lt).map(r => r.nextDate).filter(Boolean).sort()[0] || "";
+    o.last[t] = rs.reduce((m, r) => r.date > m ? r.date : m, "");
+  }
+  return o;
+}
+const pushIdx = (id, p, recs, deleted = false) => setDoc(doc(db, "petsIndex", id), { ownerUid: uid, name: p.name, species: p.species, birth: p.birth || "", ...summarize(recs), deleted, updatedAt: serverTimestamp() });
+async function migrate(p) {
+  migrating.add(p.id);
+  try {
+    const s = await getDocs(collection(db, "users", uid, "pets", p.id, "records"));
+    await pushIdx(p.id, p, s.docs.map(d => d.data()));
+    await setDoc(doc(db, "users", uid, "pets", p.id), { idx: true }, { merge: true });
+  } catch (e) { console.error(e); }
+}
 
 function watchRecords() {
+  if (watchedId === petId && (unsubRec || !petId)) return;
+  watchedId = petId;
   if (unsubRec) unsubRec(); records = [];
   if (!petId) return renderContent();
   unsubRec = onSnapshot(collection(db, "users", uid, "pets", petId, "records"), s => {
@@ -243,20 +438,23 @@ function watchRecords() {
 /* ---------- pets ---------- */
 function renderPets() {
   $("pets").innerHTML = pets.map(p => `<button class="pet ${p.id === petId ? "on" : ""}" data-id="${p.id}"><svg class="paw" style="font-size:16px"><use href="#paw"/></svg>${esc(p.name)}</button>`).join("");
-  $("pets").querySelectorAll(".pet").forEach(b => b.onclick = () => { petId = b.dataset.id; renderPets(); watchRecords(); });
+  $("pets").querySelectorAll(".pet").forEach(b => b.onclick = () => { petId = b.dataset.id; fresh = true; renderPets(); watchRecords(); });
   $("empty").classList.toggle("hidden", pets.length > 0);
   $("content").classList.toggle("hidden", pets.length === 0);
 }
 $("addPet").onclick = () => $("petDlg").showModal();
 $("petForm").onsubmit = async () => {
-  const data = { name: $("pn").value.trim(), species: $("ps").value, birth: $("pb").value || "", createdAt: serverTimestamp() };
+  const data = { name: $("pn").value.trim(), species: $("ps").value, birth: $("pb").value || "" };
   $("petForm").reset();
-  const r = await addDoc(collection(db, "users", uid, "pets"), data); petId = r.id;
+  const ref = doc(collection(db, "users", uid, "pets")); petId = ref.id;
+  await setDoc(ref, { ...data, idx: true, createdAt: serverTimestamp() });
+  await pushIdx(ref.id, data, []);
 };
 $("delPet").onclick = async () => {
   const p = pets.find(x => x.id === petId); if (!p) return;
   if (!confirm(`Excluir ${p.name} e todo o histórico dele?`)) return;
   const snap = await getDocs(collection(db, "users", uid, "pets", petId, "records"));
+  await pushIdx(petId, p, [], true);
   await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
   await deleteDoc(doc(db, "users", uid, "pets", petId));
 };
@@ -270,7 +468,7 @@ function renderContent() {
     const n = records.filter(r => r.type === k).length;
     return `<button class="${k === tab ? "on" : ""}" data-t="${k}">${t.label}<span>${n} ${n === 1 ? "registro" : "registros"}</span></button>`;
   }).join("");
-  $("tabs").querySelectorAll("button").forEach(b => b.onclick = () => { tab = b.dataset.t; renderContent(); });
+  $("tabs").querySelectorAll("button").forEach(b => b.onclick = () => { tab = b.dataset.t; fresh = true; renderContent(); });
   renderPanel();
 }
 
@@ -285,11 +483,15 @@ function status(next) {
 function renderPanel() {
   const T = TABS[tab], isV = tab === "vacina";
   const list = records.filter(r => r.type === tab).sort((a, b) => b.date.localeCompare(a.date));
+  const lat = new Set(), sn = new Set();
+  list.forEach(r => { const k = r.name.trim().toLowerCase(); if (!sn.has(k)) { sn.add(k); lat.add(r.id); } });
+  if (fresh) seen.clear();
+  let n = 0; const cls = r => { if (seen.has(r.id)) return ""; seen.add(r.id); return "in"; };
+  $("panel").className = "panel" + (fresh ? " pop" : ""); fresh = false;
   $("panel").innerHTML = `
     <h3>${T.title}</h3><p class="sub">${T.sub}</p>
     <form id="rf"><div class="grid">
       <div class="field full"><label>${T.name}</label><input id="rn" required maxlength="60" placeholder="${T.ph}"></div>
-      <div class="field full"><label>Marca</label><input id="rb" required maxlength="60" placeholder="Ex.: Zoetis, MSD, Boehringer"></div>
       <div class="field"><label>${T.d1}</label><input id="rd" type="date" required value="${today()}"></div>
       <div class="field"><label>${T.d2}</label><input id="rx" type="date" ${isV ? "required" : ""}>
         ${isV ? `<p class="hint" id="rh">Sugerida: 21 dias depois. Você pode alterar.</p>` : ""}</div>
@@ -297,10 +499,10 @@ function renderPanel() {
     </div><button class="btn">Adicionar</button></form>
     <div class="list"><h4>Histórico</h4>
       ${list.length ? list.map(r => `
-        <div class="item ${r.nextDate && r.nextDate < today() ? "late" : ""}">
-          <div class="info"><b>${esc(r.name)}</b> <span class="brandtag">· ${esc(r.brand)}</span>
+        <div style="--i:${n++}" class="item ${cls(r)} ${lat.has(r.id) && r.nextDate && r.nextDate < today() ? "late" : ""}">
+          <div class="info"><b>${esc(r.name)}</b>
             <div class="dates"><span><em>${isV ? "Vacinada em" : "Aplicado em"}</em> ${fmt(r.date)}</span>${r.nextDate ? `<span><em>Próxima</em> ${fmt(r.nextDate)}</span>` : ""}</div>
-            ${r.notes ? `<div class="note">${esc(r.notes)}</div>` : ""}${status(r.nextDate)}</div>
+            ${r.notes ? `<div class="note">${esc(r.notes)}</div>` : ""}${lat.has(r.id) ? status(r.nextDate) : ""}</div>
           <button class="x" title="Excluir" data-id="${r.id}">&times;</button>
         </div>`).join("") : `<div class="none">Nada por aqui ainda.</div>`}
     </div>`;
@@ -310,14 +512,130 @@ function renderPanel() {
   sync();
   $("rf").onsubmit = async e => {
     e.preventDefault();
-    await addDoc(collection(db, "users", uid, "pets", petId, "records"), {
-      type: tab, name: $("rn").value.trim(), brand: $("rb").value.trim(), date: rd.value,
-      nextDate: rx.value || "", notes: $("ro").value.trim(), createdAt: serverTimestamp()
-    });
+    const rec = { type: tab, name: $("rn").value.trim(), date: rd.value, nextDate: rx.value || "", notes: $("ro").value.trim() };
+    const p = pets.find(x => x.id === petId), id = petId, prev = records;
+    await addDoc(collection(db, "users", uid, "pets", id, "records"), { ...rec, createdAt: serverTimestamp() });
+    await pushIdx(id, p, prev.concat([rec]));
   };
   $("panel").querySelectorAll(".x").forEach(b => b.onclick = async () => {
-    if (confirm("Excluir este registro?")) await deleteDoc(doc(db, "users", uid, "pets", petId, "records", b.dataset.id));
+    if (!confirm("Excluir este registro?")) return;
+    b.closest(".item").classList.add("out");
+    const id = petId, rid = b.dataset.id, p = pets.find(x => x.id === id), rest = records.filter(r => r.id !== rid);
+    setTimeout(async () => { await deleteDoc(doc(db, "users", uid, "pets", id, "records", rid)); await pushIdx(id, p, rest); }, 260);
   });
+}
+
+/* ---------- admin ---------- */
+const CK = "pet_adm_v1";
+let A = null, aTab = "users", shown = 40, recCache = {}, qT;
+const norm = v => (v || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const ms = x => (x && x.toMillis ? x.toMillis() : 0);
+const LBL = { vacina: "Vacina atrasada", vermifugo: "Vermífugo atrasado", antipulgas: "Antipulgas atrasado" };
+const loadA = () => { try { A = JSON.parse(localStorage.getItem(CK)); } catch (e) {} A = A || { u: {}, p: {}, tu: 0, tp: 0, at: 0, n: 0 }; };
+$("admBtn").onclick = () => setView(view === "admin" ? "home" : "admin");
+function setView(v) {
+  view = v;
+  $("home").classList.toggle("hidden", v !== "home"); $("admin").classList.toggle("hidden", v !== "admin");
+  $("admBtn").textContent = v === "admin" ? "Voltar" : "Administração";
+  if (v === "admin" && uid === ADMIN) { if (!A) loadA(); admTab(); if (Date.now() - A.at > 600000) admSync(); }
+}
+$("syncBtn").onclick = () => admSync();
+$("aU").onclick = () => { aTab = "users"; shown = 40; admTab(); };
+$("aP").onclick = () => { aTab = "pets"; shown = 40; admTab(); };
+
+/* sincronização incremental: só lê o que mudou desde a última vez (mínimo 1 leitura por consulta) */
+async function admSync() {
+  const b = $("syncBtn"); b.disabled = true; b.textContent = "Atualizando...";
+  try {
+    let n = 0;
+    const g = (col, from) => getDocs(query(collection(db, col), where("updatedAt", ">", Timestamp.fromMillis(from)), orderBy("updatedAt")));
+    const su = await g("profiles", A.tu);
+    su.forEach(d => { const x = d.data(); A.u[d.id] = { name: x.name || "", email: x.email || "", phone: x.phone || "" }; A.tu = Math.max(A.tu, ms(x.updatedAt)); n++; });
+    const sp = await g("petsIndex", A.tp);
+    sp.forEach(d => {
+      const x = d.data(); A.tp = Math.max(A.tp, ms(x.updatedAt)); n++;
+      if (x.deleted) delete A.p[d.id]; else A.p[d.id] = { o: x.ownerUid, name: x.name, sp: x.species, c: x.counts || {}, d: x.due || {}, l: x.last || {} };
+    });
+    A.n = Math.max(n, 2); A.at = Date.now();
+    localStorage.setItem(CK, JSON.stringify(A));
+  } catch (e) { alert("Não foi possível atualizar: " + (e.code || e.message)); }
+  b.disabled = false; b.textContent = "Atualizar"; admRender();
+}
+
+function admTab() {
+  $("aU").classList.toggle("on", aTab === "users"); $("aP").classList.toggle("on", aTab === "pets");
+  $("aPanel").className = "panel pop";
+  $("aPanel").innerHTML = aTab === "users"
+    ? `<div class="field"><label>Buscar tutor</label><input id="q" placeholder="Nome, e-mail ou telefone" autocomplete="off"></div><div id="res" class="list" style="margin-top:0"></div>`
+    : `<div class="grid"><div class="field full"><label>Buscar animal ou tutor</label><input id="q" placeholder="Nome do animal, nome ou telefone do tutor" autocomplete="off"></div>
+       <div class="field"><label>Espécie</label><select id="fs"><option value="">Todas</option><option>Cachorro</option><option>Gato</option><option>Outro</option></select></div>
+       <div class="field"><label>Situação</label><select id="ft"><option value="">Todas</option><option value="any">Qualquer item atrasado</option><option value="vacina">Vacina atrasada</option><option value="vermifugo">Vermífugo atrasado</option><option value="antipulgas">Antipulgas atrasado</option><option value="soon">Vence em 7 dias</option><option value="novac">Sem vacinas registradas</option></select></div></div>
+       <div id="res" class="list" style="margin-top:0"></div>`;
+  $("q").oninput = () => { clearTimeout(qT); qT = setTimeout(() => { shown = 40; admRender(); }, 150); };
+  ["fs", "ft"].forEach(i => $(i) && ($(i).onchange = () => { shown = 40; admRender(); }));
+  $("res").onclick = e => {
+    const b = e.target.closest("[data-pet]"); if (b) openPet(b.dataset.pet);
+    if (e.target.closest("[data-more]")) { shown += 40; admRender(); }
+  };
+  admRender();
+}
+
+function admRender() {
+  if (!A) return;
+  const t = today(), lim = addDays(t, 7);
+  const pets = Object.entries(A.p).map(([id, p]) => ({ id, ...p }));
+  const users = Object.entries(A.u).map(([id, u]) => ({ id, ...u }));
+  const isLate = (p, k) => p.d && p.d[k] && p.d[k] < t;
+  const anyLate = p => Object.keys(TABS).some(k => isLate(p, k));
+  $("stats").innerHTML = [["Tutores", users.length], ["Animais", pets.length], ["Com atraso", pets.filter(anyLate).length], ["Vacina atrasada", pets.filter(p => isLate(p, "vacina")).length]]
+    .map(([l, v]) => `<div class="stat"><b>${v}</b><span>${l}</span></div>`).join("");
+  $("syncInfo").textContent = A.at ? `Atualizado em ${new Date(A.at).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })} · ${A.n} leituras` : "Ainda não sincronizado";
+  const res = $("res"); if (!res) return;
+  const q = $("q").value.trim(), qn = norm(q), qd = digits(q), phoneHit = u => qd.length >= 3 && (u?.phone || "").includes(qd);
+  const more = l => l.length > shown ? `<button class="btn soft more" data-more>Mostrar mais (${l.length - shown})</button>` : "";
+  const tel = u => u.phone ? `<a class="tel" href="tel:+55${esc(u.phone)}">${fmtPhone(u.phone)}</a>` : "sem telefone";
+  if (aTab === "users") {
+    const by = {}; pets.forEach(p => (by[p.o] = by[p.o] || []).push(p));
+    const l = users.filter(u => !q || norm(u.name).includes(qn) || norm(u.email).includes(qn) || phoneHit(u)).sort((a, b) => norm(a.name).localeCompare(norm(b.name)));
+    res.innerHTML = l.slice(0, shown).map(u => {
+      const ps = by[u.id] || [];
+      return `<div class="item"><div class="info"><b>${esc(u.name)}</b><div class="note">${esc(u.email)} · ${tel(u)}</div>
+        <div class="chips">${ps.length ? ps.map(p => `<button class="chip ${anyLate(p) ? "late" : ""}" data-pet="${p.id}">${esc(p.name)} · ${esc(p.sp)}</button>`).join("") : `<span class="note">Nenhum animal cadastrado</span>`}</div></div></div>`;
+    }).join("") + more(l) || `<div class="none">Nenhum tutor encontrado.</div>`;
+  } else {
+    const sp = $("fs").value, st = $("ft").value;
+    const l = pets.filter(p => {
+      if (sp && p.sp !== sp) return false;
+      const o = A.u[p.o];
+      if (q && !(norm(p.name).includes(qn) || norm(o?.name).includes(qn) || phoneHit(o))) return false;
+      if (st === "any") return anyLate(p);
+      if (LBL[st]) return isLate(p, st);
+      if (st === "soon") return Object.values(p.d || {}).some(v => v && v >= t && v <= lim);
+      if (st === "novac") return !(p.c && p.c.vacina);
+      return true;
+    }).sort((a, b) => norm(a.name).localeCompare(norm(b.name)));
+    res.innerHTML = l.slice(0, shown).map(p => {
+      const o = A.u[p.o] || {}, late = Object.keys(LBL).filter(k => isLate(p, k));
+      const bd = late.length ? late.map(k => `<span class="badge b-late">${LBL[k]}</span>`).join("") : (Object.values(p.c || {}).some(Boolean) ? `<span class="badge b-ok">Em dia</span>` : `<span class="badge b-soon">Sem registros</span>`);
+      return `<div class="item"><div class="info"><b>${esc(p.name)}</b> <span class="brandtag">· ${esc(p.sp)}</span>
+        <div class="note">Tutor: ${esc(o.name || "?")} · ${tel(o)}</div><div class="badges">${bd}</div></div><button class="btn soft" data-pet="${p.id}">Ver</button></div>`;
+    }).join("") + more(l) || `<div class="none">Nenhum animal encontrado.</div>`;
+  }
+}
+
+/* registros de um animal: só são lidos quando o admin abre o animal */
+async function openPet(id) {
+  const p = A.p[id], o = A.u[p.o] || {};
+  const head = `<p class="note">${esc(p.sp)} · Tutor: ${esc(o.name || "?")} · ${fmtPhone(o.phone)}</p>`;
+  $("idT").textContent = p.name; $("idB").innerHTML = head + `<div class="none">Carregando...</div>`; $("infoDlg").showModal();
+  try {
+    if (!recCache[id]) recCache[id] = (await getDocs(collection(db, "users", p.o, "pets", id, "records"))).docs.map(d => d.data());
+    const rs = recCache[id];
+    $("idB").innerHTML = head + Object.entries(TABS).map(([k, T]) => {
+      const l = rs.filter(r => r.type === k).sort((a, b) => b.date.localeCompare(a.date));
+      return `<h4 class="sec">${T.label}</h4>` + (l.length ? l.map(r => `<div class="rrow"><b>${esc(r.name)}</b><div class="dates"><span><em>Data</em> ${fmt(r.date)}</span>${r.nextDate ? `<span><em>Próxima</em> ${fmt(r.nextDate)}</span>` : ""}</div>${r.notes ? `<div class="note">${esc(r.notes)}</div>` : ""}</div>`).join("") : `<div class="note">Nenhum registro.</div>`);
+    }).join("");
+  } catch (e) { $("idB").innerHTML = head + `<div class="err">Não foi possível carregar.</div>`; }
 }
 </script>
 </body>
