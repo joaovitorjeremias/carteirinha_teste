@@ -106,6 +106,8 @@ nav.tabs.two{grid-template-columns:repeat(2,1fr)}
 .chip:hover{background:var(--lime);border-color:var(--lime);color:var(--green);transform:translateY(-2px)}
 .tel{color:var(--green);font-weight:700;text-decoration:none}
 .badges .badge{margin:6px 6px 0 0}
+.chip.wa{background:var(--green);border-color:var(--green);color:#fff}
+.chip.wa:hover{background:var(--lime);border-color:var(--lime);color:var(--green)}
 .more{display:block;margin:16px auto 0}
 #infoDlg{width:min(520px,94vw)}
 #idB{max-height:60vh;overflow:auto;margin-bottom:12px}
@@ -230,9 +232,10 @@ dialog[open]::backdrop{animation:fadeUp .3s}
       <button class="btn soft" id="syncBtn" style="margin-left:auto">Atualizar</button>
     </div>
     <div class="stats" id="stats"></div>
-    <nav class="tabs two">
+    <nav class="tabs">
       <button id="aU" class="on">Tutores<span>nome, e-mail ou telefone</span></button>
-      <button id="aP">Animais<span>filtros e vacinas atrasadas</span></button>
+      <button id="aP">Animais<span>filtros e atrasos</span></button>
+      <button id="aM">Mensagens<span>textos do WhatsApp</span></button>
     </nav>
     <div class="panel" id="aPanel"></div>
   </main>
@@ -550,12 +553,13 @@ function setView(v) {
   $("admBtn").textContent = v === "admin" ? "Voltar" : "Administração";
   if (v === "admin" && uid === ADMIN) { if (!A) loadA(); admTab(); if (Date.now() - A.at > 600000) admSync(); }
 }
-$("syncBtn").onclick = () => admSync();
+$("syncBtn").onclick = () => admSync(true);
 $("aU").onclick = () => { aTab = "users"; shown = 40; admTab(); };
 $("aP").onclick = () => { aTab = "pets"; shown = 40; admTab(); };
+$("aM").onclick = () => { aTab = "msgs"; admTab(); };
 
 /* sincronização incremental: só lê o que mudou desde a última vez (mínimo 1 leitura por consulta) */
-async function admSync() {
+async function admSync(force) {
   const b = $("syncBtn"); b.disabled = true; b.textContent = "Atualizando...";
   try {
     let n = 0;
@@ -567,6 +571,10 @@ async function admSync() {
       const x = d.data(); A.tp = Math.max(A.tp, ms(x.updatedAt)); n++;
       if (x.deleted) delete A.p[d.id]; else A.p[d.id] = { o: x.ownerUid, name: x.name, sp: x.species, c: x.counts || {}, d: x.due || {}, l: x.last || {} };
     });
+    if (force || !A.m) {
+      const m = await getDoc(doc(db, "config", "messages")); n++;
+      A.m = m.exists() ? { vacina: m.data().vacina, vermifugo: m.data().vermifugo, antipulgas: m.data().antipulgas } : {};
+    }
     A.n = Math.max(n, 2); A.at = Date.now();
     localStorage.setItem(CK, JSON.stringify(A));
   } catch (e) { alert("Não foi possível atualizar: " + (e.code || e.message)); }
@@ -574,8 +582,9 @@ async function admSync() {
 }
 
 function admTab() {
-  $("aU").classList.toggle("on", aTab === "users"); $("aP").classList.toggle("on", aTab === "pets");
+  $("aU").classList.toggle("on", aTab === "users"); $("aP").classList.toggle("on", aTab === "pets"); $("aM").classList.toggle("on", aTab === "msgs");
   $("aPanel").className = "panel pop";
+  if (aTab === "msgs") { renderMsgs(); return; }
   $("aPanel").innerHTML = aTab === "users"
     ? `<div class="field"><label>Buscar tutor</label><input id="q" placeholder="Nome, e-mail ou telefone" autocomplete="off"></div><div id="res" class="list" style="margin-top:0"></div>`
     : `<div class="grid"><div class="field full"><label>Buscar animal ou tutor</label><input id="q" placeholder="Nome do animal, nome ou telefone do tutor" autocomplete="off"></div>
@@ -586,6 +595,7 @@ function admTab() {
   ["fs", "ft"].forEach(i => $(i) && ($(i).onchange = () => { shown = 40; admRender(); }));
   $("res").onclick = e => {
     const b = e.target.closest("[data-pet]"); if (b) openPet(b.dataset.pet);
+    const w = e.target.closest("[data-wa]"); if (w) openWa(w.dataset.wa);
     if (e.target.closest("[data-more]")) { shown += 40; admRender(); }
   };
   admRender();
@@ -629,7 +639,7 @@ function admRender() {
       const o = A.u[p.o] || {}, late = Object.keys(LBL).filter(k => isLate(p, k));
       const bd = late.length ? late.map(k => `<span class="badge b-late">${LBL[k]}</span>`).join("") : (Object.values(p.c || {}).some(Boolean) ? `<span class="badge b-ok">Em dia</span>` : `<span class="badge b-soon">Sem registros</span>`);
       return `<div class="item"><div class="info"><b>${esc(p.name)}</b> <span class="brandtag">· ${esc(p.sp)}</span>
-        <div class="note">Tutor: ${esc(o.name || "?")} · ${tel(o)}</div><div class="badges">${bd}</div></div><button class="btn soft" data-pet="${p.id}">Ver</button></div>`;
+        <div class="note">Tutor: ${esc(o.name || "?")} · ${tel(o)}</div><div class="badges">${bd}</div>${waBtns(p)}</div><button class="btn soft" data-pet="${p.id}">Ver</button></div>`;
     }).join("") + more(l) || `<div class="none">Nenhum animal encontrado.</div>`;
   }
 }
@@ -637,7 +647,7 @@ function admRender() {
 /* registros de um animal: só são lidos quando o admin abre o animal */
 async function openPet(id) {
   const p = A.p[id], o = A.u[p.o] || {};
-  const head = `<p class="note">${esc(p.sp)} · Tutor: ${esc(o.name || "?")} · ${fmtPhone(o.phone)}</p>`;
+  const head = `<p class="note">${esc(p.sp)} · Tutor: ${esc(o.name || "?")} · ${fmtPhone(o.phone)}</p>${waBtns(p)}`;
   $("idT").textContent = p.name; $("idB").innerHTML = head + `<div class="none">Carregando...</div>`; $("infoDlg").showModal();
   try {
     if (!recCache[id]) recCache[id] = (await getDocs(collection(db, "users", p.o, "pets", id, "records"))).docs.map(d => d.data());
@@ -647,6 +657,42 @@ async function openPet(id) {
       return `<h4 class="sec">${T.label}</h4>` + (l.length ? l.map(r => `<div class="rrow"><b>${esc(r.name)}</b><div class="dates"><span><em>Data</em> ${fmt(r.date)}</span>${r.nextDate ? `<span><em>Próxima</em> ${fmt(r.nextDate)}</span>` : ""}</div>${r.notes ? `<div class="note">${esc(r.notes)}</div>` : ""}</div>`).join("") : `<div class="note">Nenhum registro.</div>`);
     }).join("");
   } catch (e) { $("idB").innerHTML = head + `<div class="err">Não foi possível carregar.</div>`; }
+}
+
+/* ---------- mensagens de WhatsApp ---------- */
+const DEF = {
+  vacina: "Olá, {tutor}! Aqui é da Carteirinha Pet. A vacina de {pet} estava prevista para {data} e já passou. Vamos agendar a revacinação?",
+  vermifugo: "Olá, {tutor}! Aqui é da Carteirinha Pet. O vermífugo de {pet} estava previsto para {data} e já passou. Vamos manter a vermifugação em dia?",
+  antipulgas: "Olá, {tutor}! Aqui é da Carteirinha Pet. O antipulgas e carrapatos de {pet} estava previsto para {data} e já passou. Vamos renovar a proteção?"
+};
+const WL = { vacina: "vacina", vermifugo: "vermífugo", antipulgas: "antipulgas" };
+const msgOf = k => (A.m && A.m[k]) || DEF[k];
+function waBtns(p) {
+  const o = A.u[p.o], t = today();
+  if (!o || !o.phone) return "";
+  const l = Object.keys(WL).filter(k => p.d && p.d[k] && p.d[k] < t);
+  return l.length ? `<div class="chips">${l.map(k => `<button class="chip wa" data-wa="${p.id}|${k}">WhatsApp: ${WL[k]}</button>`).join("")}</div>` : "";
+}
+function openWa(v) {
+  const [id, k] = v.split("|"), p = A.p[id], o = p && A.u[p.o];
+  if (!p || !o || !o.phone) return;
+  const txt = msgOf(k).replace(/\{tutor\}/g, () => (o.name || "").split(" ")[0]).replace(/\{pet\}/g, () => p.name).replace(/\{data\}/g, () => fmt(p.d[k]));
+  window.open(`https://wa.me/55${o.phone}?text=${encodeURIComponent(txt)}`, "_blank", "noopener");
+}
+$("idB").onclick = e => { const w = e.target.closest("[data-wa]"); if (w) openWa(w.dataset.wa); };
+function renderMsgs() {
+  $("aPanel").innerHTML = `<h3 style="font-family:Fredoka,sans-serif;font-weight:500;color:var(--green);font-size:22px;margin-bottom:4px">Mensagens do WhatsApp</h3>
+    <p class="sub" style="color:var(--brown2);font-size:14px;margin:0 0 18px">Uma mensagem para cada tipo de atraso. Use {tutor}, {pet} e {data} (data prevista) no texto.</p>`
+    + Object.keys(LBL).map(k => `<div class="field"><label>${LBL[k]}</label><textarea id="m_${k}" rows="3" maxlength="500">${esc(msgOf(k))}</textarea></div>`).join("")
+    + `<div class="row" style="justify-content:flex-start"><button class="btn" id="mSave">Salvar mensagens</button><button class="btn ghost" id="mDef">Restaurar padrão</button></div><p class="hint" id="mOk"></p>`;
+  $("mDef").onclick = () => Object.keys(LBL).forEach(k => $("m_" + k).value = DEF[k]);
+  $("mSave").onclick = async () => {
+    const m = {}; Object.keys(LBL).forEach(k => m[k] = $("m_" + k).value.trim() || DEF[k]);
+    try {
+      await setDoc(doc(db, "config", "messages"), { ...m, updatedAt: serverTimestamp() });
+      A.m = m; localStorage.setItem(CK, JSON.stringify(A)); $("mOk").textContent = "Mensagens salvas.";
+    } catch (e) { $("mOk").textContent = "Não foi possível salvar."; }
+  };
 }
 
 /* ---------- excluir conta ---------- */
