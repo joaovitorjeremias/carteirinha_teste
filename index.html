@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Carteirinha Pet</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#005e3a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Carteirinha">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" href="icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--lime:#afd953;--green:#005e3a;--brown:#4c371a;--brown2:#674e2f;--cream:#ffe9de;--card:#fff8f3;--line:#ecd3c3}
@@ -254,6 +260,14 @@ dialog[open]::backdrop{animation:fadeUp .3s}
   <div class="row"><button type="button" class="btn ghost" id="delNo">Cancelar</button><button type="button" class="btn" id="delGo" style="background:var(--brown2)" disabled>Excluir tudo</button></div>
 </dialog>
 
+<dialog id="instDlg">
+  <div class="logo"><svg class="paw"><use href="#paw"/></svg></div>
+  <h3 style="text-align:center">Instalar como app?</h3>
+  <p style="color:var(--brown2);font-size:14px;margin:0 0 16px;text-align:center">Tenha a Carteirinha Pet na tela inicial, abrindo em tela cheia como um aplicativo.</p>
+  <p id="instIos" class="hidden" style="background:var(--cream);border-radius:14px;padding:10px 14px;font-size:13px;margin:0 0 16px">No iPhone ou iPad, abra no Safari, toque em <b>Compartilhar</b> e depois em <b>Adicionar à Tela de Início</b>.</p>
+  <div class="row"><button type="button" class="btn ghost" id="instNo">Agora não</button><button type="button" class="btn" id="instGo">Instalar</button></div>
+</dialog>
+
 <dialog id="profDlg">
   <h3>Complete seu cadastro</h3>
   <form id="profForm">
@@ -420,6 +434,7 @@ async function enter(u) {
     renderPets(); watchRecords();
     pets.filter(p => !p.idx && !migrating.has(p.id)).forEach(migrate);
   });
+  setTimeout(askInstall, 1500);
 }
 
 /* resumo para o painel admin (1 doc por animal, sem precisar ler os registros) */
@@ -724,6 +739,33 @@ function renderMsgs() {
     } catch (e) { $("mOk").textContent = "Não foi possível salvar."; }
   };
 }
+
+/* ---------- instalar como app ---------- */
+let deferredInstall = null, askedNow = false;
+const standalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferredInstall = e; if (uid && !$("app").classList.contains("hidden")) askInstall(); });
+window.addEventListener("appinstalled", () => { localStorage.setItem("pwa_done", "1"); deferredInstall = null; if ($("instDlg").open) $("instDlg").close(); });
+function askInstall() {
+  if (askedNow || standalone() || localStorage.getItem("pwa_done")) return;
+  if (Date.now() - Number(localStorage.getItem("pwa_later") || 0) < 7 * 864e5) return;
+  if (!deferredInstall && !isIOS) return;
+  if (document.querySelector("dialog[open]")) return;
+  askedNow = true;
+  $("instIos").classList.toggle("hidden", !!deferredInstall);
+  $("instGo").classList.toggle("hidden", !deferredInstall);
+  $("instDlg").showModal();
+}
+const later = () => localStorage.setItem("pwa_later", String(Date.now()));
+$("instNo").onclick = () => { later(); $("instDlg").close(); };
+$("instDlg").addEventListener("cancel", later);
+$("instGo").onclick = async () => {
+  $("instDlg").close(); if (!deferredInstall) return;
+  deferredInstall.prompt();
+  const c = await deferredInstall.userChoice; deferredInstall = null;
+  if (c.outcome !== "accepted") later();
+};
+if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js").catch(() => {});
 
 /* ---------- excluir conta ---------- */
 const isGoogle = u => u.providerData.some(p => p.providerId === "google.com");
