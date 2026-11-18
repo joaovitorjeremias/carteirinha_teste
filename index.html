@@ -309,7 +309,7 @@ const app = initializeApp({
 });
 const auth = getAuth(app), db = getFirestore(app);
 const $ = id => document.getElementById(id);
-const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
 /* ---------- auth ---------- */
 let mode = "in";
@@ -349,7 +349,7 @@ $("authForm").onsubmit = async e => {
     signupP = (async () => {
       const c = await createUserWithEmailAndPassword(auth, email, pw);
       await updateProfile(c.user, { displayName: name });
-      await setDoc(doc(db, "profiles", c.user.uid), { name, email, phone, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+      await setDoc(doc(db, "profiles", c.user.uid), { name, email: c.user.email, phone, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
       await sendEmailVerification(c.user);
     })();
     await signupP;
@@ -385,7 +385,7 @@ const TABS = {
 };
 const today = () => new Date().toISOString().slice(0, 10);
 const addDays = (iso, n) => { const d = new Date(iso + "T12:00:00"); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
-const fmt = iso => iso ? iso.split("-").reverse().join("/") : "";
+const fmt = iso => /^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso.split("-").reverse().join("/") : "";
 
 const show = id => ["auth", "verify", "app"].forEach(x => $(x).classList.toggle("hidden", x !== id));
 const migrating = new Set();
@@ -590,7 +590,7 @@ let A = null, aTab = "users", shown = 40, recCache = {}, qT;
 const norm = v => (v || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 const ms = x => (x && x.toMillis ? x.toMillis() : 0);
 const LBL = { vacina: "Vacina atrasada", vermifugo: "Vermífugo atrasado", antipulgas: "Antipulgas atrasado" };
-const loadA = () => { try { A = JSON.parse(localStorage.getItem(CK)); } catch (e) {} A = A || { u: {}, p: {}, tu: 0, tp: 0, at: 0, n: 0 }; };
+const loadA = () => { try { A = JSON.parse(localStorage.getItem(CK)); } catch (e) {} A = A || { u: {}, p: {}, tu: 0, tp: 0, at: 0, n: 0 }; Object.keys(A.p).forEach(k => { if (!/^[A-Za-z0-9]{20}$/.test(k)) delete A.p[k]; }); };
 $("admBtn").onclick = () => setView(view === "admin" ? "home" : "admin");
 function setView(v) {
   view = v;
@@ -610,10 +610,11 @@ async function admSync(force) {
     let n = 0;
     const g = (col, from) => getDocs(query(collection(db, col), where("updatedAt", ">", Timestamp.fromMillis(from)), orderBy("updatedAt")));
     const su = await g("profiles", A.tu);
-    su.forEach(d => { const x = d.data(); A.tu = Math.max(A.tu, ms(x.updatedAt)); n++; if (x.deleted) { delete A.u[d.id]; return; } A.u[d.id] = { name: x.name || "", email: x.email || "", phone: x.phone || "" }; });
+    su.forEach(d => { const x = d.data(); A.tu = Math.max(A.tu, ms(x.updatedAt)); n++; if (x.deleted) { delete A.u[d.id]; return; } A.u[d.id] = { name: String(x.name || "").slice(0, 80), email: String(x.email || "").slice(0, 120), phone: digits(String(x.phone || "")).slice(0, 13) }; });
     const sp = await g("petsIndex", A.tp);
     sp.forEach(d => {
       const x = d.data(); A.tp = Math.max(A.tp, ms(x.updatedAt)); n++;
+      if (!/^[A-Za-z0-9]{20}$/.test(d.id)) return;
       if (x.deleted) delete A.p[d.id]; else A.p[d.id] = { o: x.ownerUid, name: x.name, sp: x.species, c: x.counts || {}, d: x.due || {}, l: x.last || {} };
     });
     if (force || !A.m) {
@@ -659,7 +660,7 @@ function admRender() {
   const res = $("res"); if (!res) return;
   const q = $("q").value.trim(), qn = norm(q), qd = digits(q), phoneHit = u => qd.length >= 3 && (u?.phone || "").includes(qd);
   const more = l => l.length > shown ? `<button class="btn soft more" data-more>Mostrar mais (${l.length - shown})</button>` : "";
-  const tel = u => u.phone ? `<a class="tel" href="tel:+55${esc(u.phone)}">${fmtPhone(u.phone)}</a>` : "sem telefone";
+  const tel = u => u.phone ? `<a class="tel" href="tel:+55${digits(u.phone)}">${fmtPhone(u.phone)}</a>` : "sem telefone";
   if (aTab === "users") {
     const by = {}; pets.forEach(p => (by[p.o] = by[p.o] || []).push(p));
     const l = users.filter(u => !q || norm(u.name).includes(qn) || norm(u.email).includes(qn) || phoneHit(u)).sort((a, b) => norm(a.name).localeCompare(norm(b.name)));
@@ -722,7 +723,7 @@ function openWa(v) {
   const [id, k] = v.split("|"), p = A.p[id], o = p && A.u[p.o];
   if (!p || !o || !o.phone) return;
   const txt = msgOf(k).replace(/\{tutor\}/g, () => (o.name || "").split(" ")[0]).replace(/\{pet\}/g, () => p.name).replace(/\{data\}/g, () => fmt(p.d[k]));
-  window.open(`https://wa.me/55${o.phone}?text=${encodeURIComponent(txt)}`, "_blank", "noopener");
+  window.open(`https://wa.me/55${digits(o.phone)}?text=${encodeURIComponent(txt)}`, "_blank", "noopener");
 }
 $("idB").onclick = e => { const w = e.target.closest("[data-wa]"); if (w) openWa(w.dataset.wa); };
 function renderMsgs() {
