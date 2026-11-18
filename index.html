@@ -221,6 +221,7 @@ dialog[open]::backdrop{animation:fadeUp .3s}
       <nav class="tabs" id="tabs"></nav>
       <div class="panel" id="panel"></div>
     </div>
+    <p style="text-align:center;margin-top:34px"><button id="delAcc" style="background:none;border:0;color:var(--brown2);text-decoration:underline;font-size:13px">Excluir minha conta</button></p>
   </main>
   <main id="admin" class="hidden">
     <div class="hero">
@@ -236,6 +237,15 @@ dialog[open]::backdrop{animation:fadeUp .3s}
     <div class="panel" id="aPanel"></div>
   </main>
 </section>
+
+<dialog id="delDlg">
+  <h3>Excluir conta</h3>
+  <p style="color:var(--brown2);font-size:14px;margin:0 0 14px">Isso apaga sua conta, todos os seus pets e todo o histórico de vacinas, vermífugos e antipulgas. Não dá para desfazer.</p>
+  <div id="delErr" class="err hidden"></div>
+  <div class="field hidden" id="delPwF"><label>Sua senha</label><input id="delPw" type="password" autocomplete="current-password"></div>
+  <div class="field"><label>Digite EXCLUIR para confirmar</label><input id="delTxt" autocomplete="off"></div>
+  <div class="row"><button type="button" class="btn ghost" id="delNo">Cancelar</button><button type="button" class="btn" id="delGo" style="background:var(--brown2)" disabled>Excluir tudo</button></div>
+</dialog>
 
 <dialog id="profDlg">
   <h3>Complete seu cadastro</h3>
@@ -265,8 +275,8 @@ dialog[open]::backdrop{animation:fadeUp .3s}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp, getDocs, setDoc, getDoc, where, Timestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, sendEmailVerification, deleteUser, reauthenticateWithPopup, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp, getDocs, setDoc, getDoc, where, Timestamp, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const app = initializeApp({
   apiKey: "AIzaSyDPCACpVO_RQy8nDAHI9MJFbfk6Tk2CyiE",
@@ -394,6 +404,7 @@ async function enter(u) {
   show("app");
   $("who").textContent = (profile.name || "").split(" ")[0];
   $("admBtn").classList.toggle("hidden", uid !== ADMIN);
+  $("delAcc").classList.toggle("hidden", uid === ADMIN);
   setView("home");
   unsubPets = onSnapshot(query(collection(db, "users", uid, "pets"), orderBy("createdAt")), s => {
     pets = s.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -415,7 +426,7 @@ function summarize(recs) {
   }
   return o;
 }
-const pushIdx = (id, p, recs, deleted = false) => setDoc(doc(db, "petsIndex", id), { ownerUid: uid, name: p.name, species: p.species, birth: p.birth || "", ...summarize(recs), deleted, updatedAt: serverTimestamp() });
+const pushIdx = (id, p, recs, deleted = false) => setDoc(doc(db, "petsIndex", id), deleted ? { ownerUid: uid, deleted: true, updatedAt: serverTimestamp() } : { ownerUid: uid, name: p.name, species: p.species, birth: p.birth || "", ...summarize(recs), deleted: false, updatedAt: serverTimestamp() });
 async function migrate(p) {
   migrating.add(p.id);
   try {
@@ -550,7 +561,7 @@ async function admSync() {
     let n = 0;
     const g = (col, from) => getDocs(query(collection(db, col), where("updatedAt", ">", Timestamp.fromMillis(from)), orderBy("updatedAt")));
     const su = await g("profiles", A.tu);
-    su.forEach(d => { const x = d.data(); A.u[d.id] = { name: x.name || "", email: x.email || "", phone: x.phone || "" }; A.tu = Math.max(A.tu, ms(x.updatedAt)); n++; });
+    su.forEach(d => { const x = d.data(); A.tu = Math.max(A.tu, ms(x.updatedAt)); n++; if (x.deleted) { delete A.u[d.id]; return; } A.u[d.id] = { name: x.name || "", email: x.email || "", phone: x.phone || "" }; });
     const sp = await g("petsIndex", A.tp);
     sp.forEach(d => {
       const x = d.data(); A.tp = Math.max(A.tp, ms(x.updatedAt)); n++;
@@ -637,6 +648,42 @@ async function openPet(id) {
     }).join("");
   } catch (e) { $("idB").innerHTML = head + `<div class="err">Não foi possível carregar.</div>`; }
 }
+
+/* ---------- excluir conta ---------- */
+const isGoogle = u => u.providerData.some(p => p.providerId === "google.com");
+$("delAcc").onclick = () => {
+  $("delErr").classList.add("hidden"); $("delTxt").value = ""; $("delPw").value = ""; $("delGo").disabled = true;
+  $("delPwF").classList.toggle("hidden", isGoogle(auth.currentUser));
+  $("delDlg").showModal();
+};
+$("delTxt").oninput = () => { $("delGo").disabled = $("delTxt").value.trim().toUpperCase() !== "EXCLUIR"; };
+$("delNo").onclick = () => $("delDlg").close();
+$("delGo").onclick = async () => {
+  const u = auth.currentUser, b = $("delGo"); b.disabled = true; b.textContent = "Excluindo...";
+  try {
+    if (isGoogle(u)) await reauthenticateWithPopup(u, new GoogleAuthProvider());
+    else await reauthenticateWithCredential(u, EmailAuthProvider.credential(u.email, $("delPw").value));
+    if (unsubPets) unsubPets(); if (unsubRec) unsubRec(); unsubPets = unsubRec = null; watchedId = null;
+    const ps = await getDocs(collection(db, "users", uid, "pets"));
+    let batch = writeBatch(db), n = 0;
+    const del = async ref => { batch.delete(ref); if (++n >= 400) { await batch.commit(); batch = writeBatch(db); n = 0; } };
+    for (const p of ps.docs) {
+      const rs = await getDocs(collection(p.ref, "records"));
+      for (const r of rs.docs) await del(r.ref);
+      await del(p.ref);
+    }
+    if (n) await batch.commit();
+    for (const p of ps.docs) await pushIdx(p.id, p.data(), [], true);
+    await setDoc(doc(db, "profiles", uid), { deleted: true, updatedAt: serverTimestamp() });
+    await deleteUser(u);
+    $("delDlg").close();
+  } catch (e) {
+    const m = { "auth/wrong-password": "Senha incorreta.", "auth/invalid-credential": "Senha incorreta.", "auth/popup-closed-by-user": "Confirmação cancelada.", "auth/missing-password": "Informe sua senha." };
+    const x = $("delErr"); x.textContent = m[e.code] || "Não foi possível excluir agora. Tente novamente."; x.classList.remove("hidden");
+    if (uid) { enter(u); }
+  }
+  b.textContent = "Excluir tudo"; b.disabled = $("delTxt").value.trim().toUpperCase() !== "EXCLUIR";
+};
 </script>
 </body>
 </html>
